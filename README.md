@@ -17,16 +17,22 @@ throughout the development and plan accordingly.
 
 
 <!-- Your exemplar title. Make it sound catchy! -->
-# This is my exemplar title
+# Segmentation Lab
 
 <!-- A brief description of your exemplar, which may include an image -->
-This is a brief abstract of my exemplar, which includes a representative image.
-![Scikit Camera Image](docs/assets/readme-img.png)
+This repository provides a from-scratch implementation of 3D image segmentation in Python, demonstrating both thresholding and marker-based watershed methods on real and synthetic volumetric data. Learners will explore the algorithmic logic, visualization, and reproducible coding practices behind modern segmentation workflows—bridging fundamental image processing with real-world applications. Two real datasets are included as examples:
+
+A micro-CT image of spherical particles (materials science), and
+
+A medical CT scan (biomedical imaging).
+
+By working through this project, users will gain hands-on experience in building segmentation pipelines, visualizing 3D data, and evaluating performance metrics such as Dice and Jaccard scores—developing a solid foundation for applying and extending 3D segmentation in scientific and industrial domains.
+![Scikit Camera Image](images/spherical_particles_render.png)
 
 <!-- Author information -->
-This exemplar was developed at Imperial College London by (YOUR NAME) in
-collaboration with (RSE MENTOR) from Research Software Engineering and
-(RCDS MENTOR) from Research Computing & Data Science at the Early Career
+This exemplar was developed at Imperial College London by David Büchner in
+collaboration with Aurash Karimi from Research Software Engineering and
+Jianliang Gao from Research Computing & Data Science at the Early Career
 Researcher Institute.
 
 
@@ -37,25 +43,30 @@ skills will be gained by studying your ReCoDE exemplar. -->
 
 After completing this exemplar, students will:
 
-- Learning Outcome 1
-- Learning Outcome 2
-- Learning Outcome 3
+1. Understand and implement 3D segmentation algorithms — build thresholding and watershed methods from first principles, and apply them to real volumetric datasets.
+
+2. Develop practical data handling and visualization skills — load, process, and visualize 3D imaging data using NumPy, SciPy, and scikit-image, including interactive slice and 3D surface rendering.
+
+3. Apply reproducible and modular coding practices — structure segmentation pipelines with clear, testable, and reusable Python functions.
+
+4. Evaluate and interpret segmentation results — compute quantitative metrics (Dice, Jaccard) and relate algorithmic choices to image characteristics in materials and biomedical imaging contexts.
 
 
 <!-- Audience. Think broadly as to who will benefit. -->
 ## Target Audience 🎯
 
-Who will benefit from studying this exemplar.
+Students and researchers in materials science, biomedical engineering, and computational imaging who want hands-on experience with 3D segmentation.
 
 
 <!-- Requirements.
-What skills and knowledge will students need before starting?
-e.g. ECRI courses, knowledge of a programming language or library...
+Before starting, learners should have:
 
-Is it a prerequisite skill or learning outcome?
-e.g. If your project uses a niche library, you could either set it as a
-requirement or make it a learning outcome above. If a learning outcome,
-you must include a relevant section that helps with learning this library.
+- Basic proficiency in Python — including functions, loops, and file handling.
+
+- Familiarity with NumPy for numerical array operations. (add ECRI course)
+
+- Introductory understanding of image processing concepts (e.g., grayscale intensity, filtering, segmentation).
+
 -->
 ## Prerequisites ✅
 
@@ -65,33 +76,28 @@ you must include a relevant section that helps with learning this library.
 
 ### System 💻
 
-- System requirements (e.g. Python 3.11+, Anaconda, 50 GB disk space, etc.)
-- Hardware or HPC requirements (if any)
-
+- Python 3.11+, Anaconda, 2 GB disk space
 
 <!-- Quick Start Guide. Tell learners how to engage with the exemplar. -->
 ## Getting Started 🚀
 
-e.g. Step-by-step guide:
-
-1. Start by (instruction).
-2. Visit the sections of this notebook in some particular order.
-3. Attempt exercises `1a`, `1b`, etc.
-4. Progress to advanced materials in the Github repository linked here.
-5. Compare with solutions available in the `solutions` folder.
+1. Run the main_pipeline.py script to execute the full 3D segmentation workflow — from data loading and preprocessing to segmentation, evaluation, and visualization.
 
 
 <!-- Background. Tell learners about why this exemplar is useful. -->
 ## Disciplinary Background 🔬
      
-Briefly describe how this project fits in your discipline, why you chose
-to work on it, and what other disciplines may find it useful.
+This exemplar is inspired by my research on medical and micro-CT imaging of packed bed adsorbers used for CO₂ capture. Through imaging, we study how much and how fast materials absorb CO₂ — linking 3D structural information to material performance.
+
+When I began this work, we relied heavily on prepared libraries such as scikit-image and commercial software. Over time, I realized that to truly extract insight from the data, I needed to customize algorithms and understand their logic from the ground up. Re-implementing methods like thresholding and watershed from scratch gave me a much deeper understanding of how segmentation actually works.
+
+This is an experience that benefits anyone working with 3D imaging — providing not just technical skills, but also a fundamental grasp of the algorithms and assumptions that usually operate behind the scenes in high-level tools.
 
 
 <!-- Software. What languages, libraries, software you use. -->
 ## Software Tools 🛠️
 
-Programming language(s), libraries, and scientific software used.
+Pyhton, numpy, matplotlib, scikit-image
 
 
 <!-- Repository structure. Explain how your code is structured. -->
