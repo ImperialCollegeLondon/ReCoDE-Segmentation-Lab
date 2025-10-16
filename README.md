@@ -27,9 +27,10 @@ A micro-CT image of spherical particles (materials science), and
 A medical CT scan (biomedical imaging).
 
 By working through this project, users will gain hands-on experience in building segmentation pipelines, visualizing 3D data, and evaluating performance metrics such as Dice and Jaccard scores—developing a solid foundation for applying and extending 3D segmentation in scientific and industrial domains.
-![Scikit Camera Image](images/spherical_particles_render.png)
 
-![Scikit Camera Image](images/ortho_plane_cubecrop_orig.png) ![Scikit Camera Image](images/ortho_plane_cubecrop_labeled.png)
+Original Gray Scale Image             |  Segmented Image
+:-------------------------:|:-------------------------:
+![Scikit Camera Image](images/ortho_plane_cubecrop_orig.png)  |  ![Scikit Camera Image](images/ortho_plane_cubecrop_labeled.png)
 
 <!-- Author information -->
 This exemplar was developed at Imperial College London by David Büchner in
