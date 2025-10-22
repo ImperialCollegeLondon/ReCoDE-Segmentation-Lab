@@ -43,7 +43,7 @@ from visualisation import plot_3d_orthogonal_planes
 # -----------------------------
 # 1. Load the 3D image/dataset onto a numpy array
 # i.e. into a format that allows efficient manipulation in the later steps
-image3d = load_tif_sequence("../imaging_data/spherical_particles",start=100,end=199)
+image3d = load_tif_sequence("../imaging_data/spherical_particles", start=100, end=199)
 
 # -----------------------------
 # 2. Crop the image to a cubical section.
