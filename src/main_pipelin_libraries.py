@@ -54,7 +54,12 @@ size_of_original_image3d = np.shape(image3d)
 size_cubecrop = np.min(size_of_original_image3d)
 
 # Crop the 3D image to a centered cube
-image3d_cubecrop = image3d[tuple(slice((s - size_cubecrop)//2, (s - size_cubecrop)//2 + size_cubecrop) for s in image3d.shape)]
+image3d_cubecrop = image3d[
+    tuple(
+        slice((s - size_cubecrop) // 2, (s - size_cubecrop) // 2 + size_cubecrop)
+        for s in image3d.shape
+    )
+]
 
 # Print a statement showing the crop
 print(f"3D image cropped from size {size_of_original_image3d} to {image3d_cubecrop.shape}")
