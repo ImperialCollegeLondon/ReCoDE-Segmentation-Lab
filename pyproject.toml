@@ -34,6 +34,7 @@ dev = [
 [tool.ruff]
 exclude = ["main/imaging_data"]
 target-version = "py314"
+line-length = 88
 
 [tool.ruff.lint]
 select = [
@@ -43,6 +44,11 @@ select = [
     "I", # isort
     "UP", # pyupgrade
     "RUF", # ruff's own rules
+]
+ignore = [
+    "E501",
+    "D415",
+    "D205",
 ]
 pydocstyle.convention = "google"
 
