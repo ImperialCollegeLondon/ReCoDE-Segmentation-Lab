@@ -4,15 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc95b509-1986-44b9-9c05-5c347093a3c9" name="Changes" comment="Added function to load imaging data (.tif files) onto a numpy array (load_dataset.py).  Added Load data section to main_pipeline.py script">
-      <change afterPath="$PROJECT_DIR$/.idea/ruff.xml" afterDir="false" />
+    <list default="true" id="bc95b509-1986-44b9-9c05-5c347093a3c9" name="Changes" comment="Integrated ruff, added/adjusted dependences,applied code clean up through ruff.">
+      <change afterPath="$PROJECT_DIR$/.pre-commit-config.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/load_dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/load_dataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main_pipelin_libraries.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main_pipelin_libraries.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main_pipeline.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/visualisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/visualisation.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -213,7 +209,7 @@
       <workItem from="1759936019302" duration="116000" />
       <workItem from="1761132022696" duration="112000" />
       <workItem from="1761133105828" duration="85000" />
-      <workItem from="1761133252671" duration="2730000" />
+      <workItem from="1761133252671" duration="3458000" />
     </task>
     <task id="LOCAL-00001" summary="Created a main_pipeline.py script. This is the central script from which the image processing of the data is ste-wise executed.">
       <option name="closed" value="true" />
@@ -327,7 +323,15 @@
       <option name="project" value="LOCAL" />
       <updated>1761136186981</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Integrated ruff, added/adjusted dependences,applied code clean up through ruff.">
+      <option name="closed" value="true" />
+      <created>1761136450760</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1761136450760</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -338,7 +342,8 @@
     <MESSAGE value="Added directories for imaging data and images, added micro CT dataset of spherical particles." />
     <MESSAGE value="Added function to load imaging data (.tif files) onto a numpy array (load_dataset.py).  Added Load data section to main_pipeline.py script" />
     <MESSAGE value="Code style cleanup via Ruff" />
-    <option name="LAST_COMMIT_MESSAGE" value="Code style cleanup via Ruff" />
+    <MESSAGE value="Integrated ruff, added/adjusted dependences,applied code clean up through ruff." />
+    <option name="LAST_COMMIT_MESSAGE" value="Integrated ruff, added/adjusted dependences,applied code clean up through ruff." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ReCoDE_Segmentation_Lab$load_dataset.coverage" NAME="load_dataset Coverage Results" MODIFIED="1759935375572" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
