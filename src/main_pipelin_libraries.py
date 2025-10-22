@@ -97,6 +97,8 @@ unique_labels_cubecrop = np.unique(labels_cubecrop)
 print("Number of regions (excluding background):", len(unique_labels_cubecrop) - 1)
 
 # Create orthogonal slice visualization
-plot_3d_orthogonal_planes(labels_cubecrop,cmap='nipy_spectral',snapshot_view=(30, 300))
+plot_3d_orthogonal_planes(
+    labels_cubecrop, cmap="nipy_spectral", snapshot_view=(30, 300)
+)
 
 # -----------------------------
