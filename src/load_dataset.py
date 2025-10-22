@@ -74,7 +74,9 @@ def load_tif_sequence(directory, prefix="Small particles_rec", start=None, end=N
         )
         start_idx = min_idx
     if end_idx > max_idx:
-        print(f"Warning: end={end_idx} is larger than the maximum available index {max_idx}. Clipping to {max_idx}.")
+        print(
+            f"Warning: end={end_idx} is larger than the maximum available index {max_idx}. Clipping to {max_idx}."
+        )
         end_idx = max_idx
     if start_idx > max_idx or end_idx < min_idx:
         print("Warning: requested range is outside available file indices. No images to load.")
