@@ -62,7 +62,9 @@ image3d_cubecrop = image3d[
 ]
 
 # Print a statement showing the crop
-print(f"3D image cropped from size {size_of_original_image3d} to {image3d_cubecrop.shape}")
+print(
+    f"3D image cropped from size {size_of_original_image3d} to {image3d_cubecrop.shape}"
+)
 
 # Create orthogonal slice visualization
 plot_3d_orthogonal_planes(image3d_cubecrop,snapshot_view=(30, 300))
