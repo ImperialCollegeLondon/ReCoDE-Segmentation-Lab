@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-'''
+"""
 ===========================================================
  Script Name:    main_pipeline_libraries.py
  Author:         David Buchner, Imperial College London
