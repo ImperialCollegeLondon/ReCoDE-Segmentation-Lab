@@ -3,11 +3,20 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "your_project"
+name = "ReCoDe-SegmentationLab"
 version = "0.1.0"
 
+authors = [
+    { name = "David Büchner", email = "david.buchner21@imperial.ac.uk" },
+]
+
+requires-python = ">=3.14"
 dependencies = [
-    # Add runtime dependencies here
+    "numpy>=2.3.3",
+    "scipy>=1.16.2",
+    "matplotlib>=3.10.7",
+    "scikit-image>=0.25.2",
+    "imageio>=2.37.0",
 ]
 
 [project.optional-dependencies]
@@ -17,5 +26,24 @@ dev = [
     "mkdocs-jupyter==0.25.1",
     "mkdocs-exclude==1.0.2",
     "mkdocs-material==9.6.12",
-    "python-markdown-math==0.9"
+    "python-markdown-math==0.9",
+    "ruff-0.14.1",
 ]
+
+[tool.ruff]
+exclude = ["main/imaging_data"]
+target-version = "py314"
+
+[tool.ruff.lint]
+select = [
+    "D", # pydocstyle
+    "E", # pycodestyle
+    "F", # Pyflakes
+    "I", # isort
+    "UP", # pyupgrade
+    "RUF", # ruff's own rules
+]
+pydocstyle.convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D104"] # Missing docstring in public package

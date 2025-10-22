@@ -26,6 +26,7 @@ import os
 import numpy as np
 import imageio.v3 as iio
 
+
 # -----------------------------
 def load_tif_sequence(directory, prefix="Small particles_rec", start=None, end=None):
     """
@@ -51,7 +52,7 @@ def load_tif_sequence(directory, prefix="Small particles_rec", start=None, end=N
     matched_files = []
     for f in all_files:
         if f.startswith(prefix) and f.endswith(".tif"):
-            num_part = f[len(prefix):-4]
+            num_part = f[len(prefix) : -4]
             if num_part.isdigit():
                 matched_files.append((f, int(num_part)))
 

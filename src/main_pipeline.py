@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-'''
+"""
 ===========================================================
  Script Name:    main_pipeline.py
  Author:         David Buchner, Imperial College London
@@ -25,7 +25,8 @@
  Notes:
 
 ===========================================================
-'''
+"""
+
 # -----------------------------
 # Load Python packages
 import numpy as np
@@ -34,6 +35,6 @@ from load_dataset import load_tif_sequence
 # -----------------------------
 # 1. Load the 3D image/dataset onto a numpy array
 # i.e. into a format that allows efficient manipulation in the later steps
-stack = load_tif_sequence("../imaging_data/spherical_particles",start=100,end=199)
+stack = load_tif_sequence("../imaging_data/spherical_particles", start=100, end=199)
 
 # -----------------------------

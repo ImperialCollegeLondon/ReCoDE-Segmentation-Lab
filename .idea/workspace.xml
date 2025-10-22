@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc95b509-1986-44b9-9c05-5c347093a3c9" name="Changes" comment="Added function to load imaging data (.tif files) onto a numpy array (load_dataset.py).  Added Load data section to main_pipeline.py script" />
+    <list default="true" id="bc95b509-1986-44b9-9c05-5c347093a3c9" name="Changes" comment="Added function to load imaging data (.tif files) onto a numpy array (load_dataset.py).  Added Load data section to main_pipeline.py script">
+      <change afterPath="$PROJECT_DIR$/.idea/ruff.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/load_dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/load_dataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_pipelin_libraries.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main_pipelin_libraries.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main_pipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/visualisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/visualisation.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -33,11 +42,23 @@
     </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="loading_preprocessing" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;davidbuech&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/ImperialCollegeLondon/ReCoDE-Segmentation-Lab.git&quot;,
+    &quot;accountId&quot;: &quot;bb8395b5-16f5-4c7f-abfa-8b0499fa5bb4&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
 }</component>
@@ -49,23 +70,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.load_dataset.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main_pipeline.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/db321/PyhtonProjects/ReCoDE-Segmentation-Lab&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.load_dataset.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.main_pipelin_libraries.executor": "Run",
+    "Python.main_pipeline.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "distancetransform__implementation",
+    "last_opened_file_path": "C:/Users/db321/Downloads/ruff-pycharm-plugin-0.0.50-signed.zip",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RunManager" selected="Python.main">
+}]]></component>
+  <component name="RunManager" selected="Python.main_pipelin_libraries">
     <configuration name="load_dataset" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ReCoDE-Segmentation-Lab" />
       <option name="ENV_FILES" value="" />
@@ -112,6 +137,29 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="main_pipelin_libraries" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ReCoDE-Segmentation-Lab" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/main_pipelin_libraries.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="main_pipeline" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ReCoDE-Segmentation-Lab" />
       <option name="ENV_FILES" value="" />
@@ -137,19 +185,19 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.main_pipeline" />
+        <item itemvalue="Python.main_pipelin_libraries" />
         <item itemvalue="Python.main" />
         <item itemvalue="Python.main_pipeline" />
-        <item itemvalue="Python.main" />
         <item itemvalue="Python.load_dataset" />
+        <item itemvalue="Python.main_pipeline" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-PY-241.14494.241" />
-        <option value="bundled-python-sdk-0509580d9d50-28c9f5db9ffe-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.14494.241" />
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-PY-252.26830.99" />
+        <option value="bundled-python-sdk-164cda30dcd9-0af03a5fa574-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.26830.99" />
       </set>
     </attachedChunks>
   </component>
@@ -163,6 +211,9 @@
       <updated>1759921050876</updated>
       <workItem from="1759921052009" duration="7983000" />
       <workItem from="1759936019302" duration="116000" />
+      <workItem from="1761132022696" duration="112000" />
+      <workItem from="1761133105828" duration="85000" />
+      <workItem from="1761133252671" duration="2730000" />
     </task>
     <task id="LOCAL-00001" summary="Created a main_pipeline.py script. This is the central script from which the image processing of the data is ste-wise executed.">
       <option name="closed" value="true" />
@@ -188,7 +239,95 @@
       <option name="project" value="LOCAL" />
       <updated>1759935715924</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Code style cleanup via Ruff">
+      <option name="closed" value="true" />
+      <created>1761135896779</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1761135896779</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Code style cleanup via Ruff">
+      <option name="closed" value="true" />
+      <created>1761135903306</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1761135903306</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Code style cleanup via Ruff">
+      <option name="closed" value="true" />
+      <created>1761135907720</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1761135907720</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Code style cleanup via Ruff">
+      <option name="closed" value="true" />
+      <created>1761135928684</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1761135928684</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Code style cleanup via Ruff">
+      <option name="closed" value="true" />
+      <created>1761135936308</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1761135936308</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Code style cleanup via Ruff">
+      <option name="closed" value="true" />
+      <created>1761136136214</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1761136136214</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Code style cleanup via Ruff">
+      <option name="closed" value="true" />
+      <created>1761136143713</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1761136143713</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Code style cleanup via Ruff">
+      <option name="closed" value="true" />
+      <created>1761136151764</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1761136151764</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Code style cleanup via Ruff">
+      <option name="closed" value="true" />
+      <created>1761136158605</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1761136158605</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Code style cleanup via Ruff">
+      <option name="closed" value="true" />
+      <created>1761136164542</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1761136164542</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Code style cleanup via Ruff">
+      <option name="closed" value="true" />
+      <created>1761136186981</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1761136186981</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -198,11 +337,13 @@
     <MESSAGE value="Created a main_pipeline.py script. This is the central script from which the image processing of the data is ste-wise executed." />
     <MESSAGE value="Added directories for imaging data and images, added micro CT dataset of spherical particles." />
     <MESSAGE value="Added function to load imaging data (.tif files) onto a numpy array (load_dataset.py).  Added Load data section to main_pipeline.py script" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added function to load imaging data (.tif files) onto a numpy array (load_dataset.py).  Added Load data section to main_pipeline.py script" />
+    <MESSAGE value="Code style cleanup via Ruff" />
+    <option name="LAST_COMMIT_MESSAGE" value="Code style cleanup via Ruff" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ReCoDE_Segmentation_Lab$load_dataset.coverage" NAME="load_dataset Coverage Results" MODIFIED="1759935375572" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/ReCoDE_Segmentation_Lab$main_pipeline.coverage" NAME="main_pipeline Coverage Results" MODIFIED="1759936040399" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
-    <SUITE FILE_PATH="coverage/ReCoDE_Segmentation_Lab$main.coverage" NAME="main Coverage Results" MODIFIED="1759922811216" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/ReCoDE_Segmentation_Lab$main.coverage" NAME="main Coverage Results" MODIFIED="1761136052611" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/ReCoDE_Segmentation_Lab$main_pipelin_libraries.coverage" NAME="main_pipelin_libraries Coverage Results" MODIFIED="1761136070542" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
   </component>
 </project>

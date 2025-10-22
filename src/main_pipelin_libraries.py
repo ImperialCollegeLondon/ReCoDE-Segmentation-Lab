@@ -67,7 +67,7 @@ print(
 )
 
 # Create orthogonal slice visualization
-plot_3d_orthogonal_planes(image3d_cubecrop,snapshot_view=(30, 300))
+plot_3d_orthogonal_planes(image3d_cubecrop, snapshot_view=(30, 300))
 
 # -----------------------------
 # 4. Apply a thresholding
