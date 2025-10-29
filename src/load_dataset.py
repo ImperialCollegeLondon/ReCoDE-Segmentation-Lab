@@ -1,34 +1,32 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-'''
-===========================================================
- Script Name:    load_dataset.py
- Author:         David Buchner, Imperial College London
- Created:        08/10/2025
- Last Modified:  08/10/2025
- Description:
-    Functions to load imaging datasets and extract respective metadata.
+"""Functions to load imaging data.
 
- Requirements:
-    - Python 3.x
-    - Required libraries:
-        * numpy
-        * imageio
+Script Name:    load_dataset.py
+Author:         David Buchner, Imperial College London
+Created:        08/10/2025
+Last Modified:  22/10/2025
+Description:
+Functions to load imaging datasets and extract respective metadata.
 
- Notes:
+Requirements:
+- Python 3.x
+- Required libraries:
+* numpy
+* imageio
 
-===========================================================
-'''
+"""
+
 # -----------------------------
 # Load Python packages
 import os
-import numpy as np
+
 import imageio.v3 as iio
+import numpy as np
+
 
 # -----------------------------
 def load_tif_sequence(directory, prefix="Small particles_rec", start=None, end=None):
-    """
-    Load a sequence of TIFF files from a directory into a 3D NumPy array.
+    """Load a sequence of TIFF files from a directory into a 3D NumPy array.
 
     Parameters:
         directory (str): Path to the folder containing TIFF files.
@@ -37,7 +35,8 @@ def load_tif_sequence(directory, prefix="Small particles_rec", start=None, end=N
         end (int, optional): Ending index. If None, inferred from the files.
 
     Returns:
-        np.ndarray: 3D array of shape (num_files, height, width) containing the loaded images.
+        np.ndarray: 3D array of shape (num_files, height, width)
+        containing the loaded images.
 
     # Example usage:
     stack = load_tif_sequence("../imaging_data/spherical_particles",start=110,end=160)
@@ -50,7 +49,7 @@ def load_tif_sequence(directory, prefix="Small particles_rec", start=None, end=N
     matched_files = []
     for f in all_files:
         if f.startswith(prefix) and f.endswith(".tif"):
-            num_part = f[len(prefix):-4]
+            num_part = f[len(prefix) : -4]
             if num_part.isdigit():
                 matched_files.append((f, int(num_part)))
 
@@ -70,13 +69,21 @@ def load_tif_sequence(directory, prefix="Small particles_rec", start=None, end=N
     # Warn if requested indices are outside available range and clip them
     if start_idx < min_idx:
         print(
-            f"Warning: start={start_idx} is smaller than the minimum available index {min_idx}. Clipping to {min_idx}.")
+            f"Warning: start={start_idx} is smaller than the "
+            f"minimum available index {min_idx}. Clipping to {min_idx}."
+        )
         start_idx = min_idx
     if end_idx > max_idx:
-        print(f"Warning: end={end_idx} is larger than the maximum available index {max_idx}. Clipping to {max_idx}.")
+        print(
+            f"Warning: end={end_idx} is larger than the "
+            f"maximum available index {max_idx}. Clipping to {max_idx}."
+        )
         end_idx = max_idx
     if start_idx > max_idx or end_idx < min_idx:
-        print("Warning: requested range is outside available file indices. No images to load.")
+        print(
+            "Warning: requested range is outside available file indices."
+            "No images to load."
+        )
         return np.array([])
 
     # Filter files to load within start/end

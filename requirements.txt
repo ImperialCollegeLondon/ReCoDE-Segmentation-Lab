@@ -3,3 +3,10 @@ mkdocs-include-markdown-plugin==3.7.1
 mkdocs-jupyter==0.24.5
 mkdocs-material==9.4.6
 python-markdown-math==0.8
+numpy==2.3.3
+scipy==1.16.2
+matplotlib==3.10.7
+scikit-image==0.25.2
+imageio==2.37.0
+ruff==0.14.1
+pre-commit==4.3.0

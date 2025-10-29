@@ -1,40 +1,39 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-'''
-===========================================================
- Script Name:    main_pipeline_libraries.py
- Author:         David Buchner, Imperial College London
- Created:        10/10/2025
- Last Modified:  16/10/2025
- Description:
-    Script to execute the image segmentation pipeline. It makes use of the image processing library scikit-image
-    The pipline consists of:
-    1. Loading and preprocessing data
-    2. Threshholding and watershed segmentation
-    3. Segmentation labelling
-    4. Visualization segmentation
+"""Execution of image processing pipeline using libraries.
 
- Usage:
-    python main_pipeline_libraries.py /path/to/data/
+Script Name:    main_pipeline_libraries.py
+Author:         David Buchner, Imperial College London
+Created:        10/10/2025
+Last Modified:  22/10/2025
+Description:
+   Script to execute the image segmentation pipeline.
+   It makes use of the image processing library scikit-image
+   The pipline consists of:
+   1. Loading and preprocessing data
+   2. Threshholding and watershed segmentation
+   3. Segmentation labelling
+   4. Visualization segmentation
 
- Requirements:
-    - Python 3.x
-    - Required libraries:
-        * numpy
-        * scipy
-        * scikit-image
+Usage:
+   python main_pipeline_libraries.py /path/to/data/
 
- Notes:
+Requirements:
+   - Python 3.x
+   - Required libraries:
+       * numpy
+       * scipy
+       * scikit-image
 
-===========================================================
-'''
+"""
+
 # -----------------------------
 # Load Python packages
-import numpy as np
-from skimage import filters, morphology, measure
-from skimage.segmentation import watershed
-from scipy import ndimage as ndi
 import time
+
+import numpy as np
+from scipy import ndimage as ndi
+from skimage import filters, measure, morphology
+from skimage.segmentation import watershed
 
 from load_dataset import load_tif_sequence
 from visualisation import plot_3d_orthogonal_planes
@@ -42,7 +41,7 @@ from visualisation import plot_3d_orthogonal_planes
 # -----------------------------
 # 1. Load the 3D image/dataset onto a numpy array
 # i.e. into a format that allows efficient manipulation in the later steps
-image3d = load_tif_sequence("../imaging_data/spherical_particles",start=100,end=199)
+image3d = load_tif_sequence("../imaging_data/spherical_particles", start=100, end=199)
 
 # -----------------------------
 # 2. Crop the image to a cubical section.
@@ -53,13 +52,20 @@ size_of_original_image3d = np.shape(image3d)
 size_cubecrop = np.min(size_of_original_image3d)
 
 # Crop the 3D image to a centered cube
-image3d_cubecrop = image3d[tuple(slice((s - size_cubecrop)//2, (s - size_cubecrop)//2 + size_cubecrop) for s in image3d.shape)]
+image3d_cubecrop = image3d[
+    tuple(
+        slice((s - size_cubecrop) // 2, (s - size_cubecrop) // 2 + size_cubecrop)
+        for s in image3d.shape
+    )
+]
 
 # Print a statement showing the crop
-print(f"3D image cropped from size {size_of_original_image3d} to {image3d_cubecrop.shape}")
+print(
+    f"3D image cropped from size {size_of_original_image3d} to {image3d_cubecrop.shape}"
+)
 
 # Create orthogonal slice visualization
-plot_3d_orthogonal_planes(image3d_cubecrop,snapshot_view=(30, 300))
+plot_3d_orthogonal_planes(image3d_cubecrop, snapshot_view=(30, 300))
 
 # -----------------------------
 # 4. Apply a thresholding
@@ -89,6 +95,8 @@ unique_labels_cubecrop = np.unique(labels_cubecrop)
 print("Number of regions (excluding background):", len(unique_labels_cubecrop) - 1)
 
 # Create orthogonal slice visualization
-plot_3d_orthogonal_planes(labels_cubecrop,cmap='nipy_spectral',snapshot_view=(30, 300))
+plot_3d_orthogonal_planes(
+    labels_cubecrop, cmap="nipy_spectral", snapshot_view=(30, 300)
+)
 
 # -----------------------------

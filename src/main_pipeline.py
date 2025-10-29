@@ -1,39 +1,62 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-'''
-===========================================================
- Script Name:    main_pipeline.py
- Author:         David Buchner, Imperial College London
- Created:        08/10/2025
- Last Modified:  08/10/2025
- Description:
-    Script to execute the image segmentation pipeline.
-    The pipline consists of:
-    1. Loading and preprocessing data
-    2. Threshholding and watershed segmentation
-    3. Segmentation labelling
-    4. Visualization segmentation
+"""Execution of image processing pipeline.
 
- Usage:
-    python main_pipeline.py /path/to/data/
+main_pipeline.py
+Author:         David Buchner, Imperial College London
+Created:        08/10/2025
+Last Modified:  29/10/2025
+Description:
+   Script to execute the image segmentation pipeline.
+   The pipline consists of:
+   1. Loading and preprocessing data
+   2. Threshholding and watershed segmentation
+   3. Segmentation labelling
+   4. Visualization segmentation
 
- Requirements:
-    - Python 3.x
-    - Required libraries:
-        * numpy
+Usage:
+   python main_pipeline.py /path/to/data/
 
- Notes:
+Requirements:
+   - Python 3.x
+   - Required libraries:
+       * numpy
 
-===========================================================
-'''
+"""
+
 # -----------------------------
 # Load Python packages
 import numpy as np
+
 from load_dataset import load_tif_sequence
 
 # -----------------------------
 # 1. Load the 3D image/dataset onto a numpy array
 # i.e. into a format that allows efficient manipulation in the later steps
-stack = load_tif_sequence("../imaging_data/spherical_particles",start=100,end=199)
+image3d = load_tif_sequence("../imaging_data/spherical_particles", start=100, end=199)
 
 # -----------------------------
+# 2. Crop the image to a cubical section.
+# Get the shape of the original 3D image (e.g., (depth, height, width))
+size_of_original_image3d = np.shape(image3d)
+
+# Determine the size of the cube: use the smallest dimension of the original image
+size_cubecrop = np.min(size_of_original_image3d)
+
+# Crop the 3D image to a centered cube
+image3d_cubecrop = image3d[
+    tuple(
+        slice((s - size_cubecrop) // 2, (s - size_cubecrop) // 2 + size_cubecrop)
+        for s in image3d.shape
+    )
+]
+
+# Print a statement showing the crop
+print(
+    f"3D image cropped from size {size_of_original_image3d} to {image3d_cubecrop.shape}"
+)
+
+# Create orthogonal slice visualization
+# plot_3d_orthogonal_planes(image3d_cubecrop, snapshot_view=(30, 300))
+
+# -----------------------------
+
