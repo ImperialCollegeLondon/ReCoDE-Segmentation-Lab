@@ -46,9 +46,6 @@ select = [
     "RUF", # ruff's own rules
 ]
 ignore = [
-    "E501",
-    "D415",
-    "D205",
 ]
 pydocstyle.convention = "google"
 

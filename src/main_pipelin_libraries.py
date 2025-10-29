@@ -1,41 +1,39 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-===========================================================
- Script Name:    main_pipeline_libraries.py
- Author:         David Buchner, Imperial College London
- Created:        10/10/2025
- Last Modified:  16/10/2025
- Description:
-    Script to execute the image segmentation pipeline. It makes use of the image processing library scikit-image
-    The pipline consists of:
-    1. Loading and preprocessing data
-    2. Threshholding and watershed segmentation
-    3. Segmentation labelling
-    4. Visualization segmentation
+"""Execution of image processing pipeline using libraries.
 
- Usage:
-    python main_pipeline_libraries.py /path/to/data/
+Script Name:    main_pipeline_libraries.py
+Author:         David Buchner, Imperial College London
+Created:        10/10/2025
+Last Modified:  22/10/2025
+Description:
+   Script to execute the image segmentation pipeline.
+   It makes use of the image processing library scikit-image
+   The pipline consists of:
+   1. Loading and preprocessing data
+   2. Threshholding and watershed segmentation
+   3. Segmentation labelling
+   4. Visualization segmentation
 
- Requirements:
-    - Python 3.x
-    - Required libraries:
-        * numpy
-        * scipy
-        * scikit-image
+Usage:
+   python main_pipeline_libraries.py /path/to/data/
 
- Notes:
+Requirements:
+   - Python 3.x
+   - Required libraries:
+       * numpy
+       * scipy
+       * scikit-image
 
-===========================================================
 """
 
 # -----------------------------
 # Load Python packages
-import numpy as np
-from skimage import filters, morphology, measure
-from skimage.segmentation import watershed
-from scipy import ndimage as ndi
 import time
+
+import numpy as np
+from scipy import ndimage as ndi
+from skimage import filters, measure, morphology
+from skimage.segmentation import watershed
 
 from load_dataset import load_tif_sequence
 from visualisation import plot_3d_orthogonal_planes
