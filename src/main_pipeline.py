@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""main_pipeline.py
+"""Execution of image processing pipeline.
+
+main_pipeline.py
 Author:         David Buchner, Imperial College London
 Created:        08/10/2025
-Last Modified:  22/10/2025
+Last Modified:  29/10/2025
 Description:
    Script to execute the image segmentation pipeline.
    The pipline consists of:
@@ -25,9 +27,7 @@ Requirements:
 # Load Python packages
 import numpy as np
 
-from image_processing import chamfer_distance_3d, otsu_threshold
 from load_dataset import load_tif_sequence
-from visualisation import plot_3d_orthogonal_planes
 
 # -----------------------------
 # 1. Load the 3D image/dataset onto a numpy array
