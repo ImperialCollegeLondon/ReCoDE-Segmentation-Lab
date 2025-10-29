@@ -59,4 +59,19 @@ print(
 # plot_3d_orthogonal_planes(image3d_cubecrop, snapshot_view=(30, 300))
 
 # -----------------------------
+# 3. Calculate Otsu threshold and binary image
+# Compute Otsu's threshold
+thresh_value = otsu_threshold(image3d_cubecrop)
+
+# Apply threshold
+binary_cubecrop = image3d_cubecrop > thresh_value  # returns a boolean array
+
+# -----------------------------
+# 4. Apply distance transform and watershed segmentation
+# Compute distance transform
+distance_cubecrop = chamfer_distance_3d(binary_cubecrop)
+
+# Create orthogonal slice visualization
+plot_3d_orthogonal_planes(distance_cubecrop, snapshot_view=(30, 300))
+
 
