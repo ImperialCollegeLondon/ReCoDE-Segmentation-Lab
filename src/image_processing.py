@@ -339,8 +339,6 @@ def chamfer_distance_3d_optimized(img):
     Parameters:
         img (np.ndarray): 3D binary array of shape (X, Y, Z) with 0 for background
                           and non-zero for foreground.
-        max_iter (int): Number of full sweeps to perform. More iterations improve
-                        accuracy but increase computation time. Default is 5.
 
     Returns:
         np.ndarray: 3D array of same shape as `img`, where each voxel contains an
