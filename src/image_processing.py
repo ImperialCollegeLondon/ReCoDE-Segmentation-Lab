@@ -391,7 +391,7 @@ def chamfer_distance_3d_optimized(img):
 
     # Iterative sweeping: repeat the neighbor propagation multiple times.
     # Each sweep allows distances to propagate further through the volume.
-    max_iter = min(img.shape)  # Dynamic upper bound based on volume shape
+    max_iter = max(img.shape)  # Dynamic upper bound based on volume shape
     for i in range(max_iter):
         prev_dt = dt.copy()
 
