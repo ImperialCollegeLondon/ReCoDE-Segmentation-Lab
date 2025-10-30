@@ -240,45 +240,82 @@ def chamfer_distance_3d_structured(img):
 
     # Define structured dtype for sorting by x, y, z
     dtype = [("x", int), ("y", int), ("z", int)]
+    indices = unstructured_to_structured(np.argwhere(img == 0), dtype=dtype)
 
     # Initialize distance map:
     # Foreground voxels (non-zero) get 0, background voxels (zero) get large value
     dt = np.where(img == 0, 65535, 0).astype(np.uint32)
 
-    # Find coordinates of background voxels (where img == 0)
-    coords = np.argwhere(img == 0)
-
-    # Convert to structured array so we can sort by named fields
-    structured_coords = unstructured_to_structured(coords, dtype=dtype)
-
-    # Forward pass
-    # Sort voxels in ascending z, y, x order to mimic top-left-front sweep
-    forward_sorted = np.sort(structured_coords, order=["z", "y", "x"])
-    for idx in forward_sorted:
-        x, y, z = idx["x"], idx["y"], idx["z"]
-        for offset, w in zip(neighbours, weights):
-            # Compute neighbor coordinate in the backward direction
-            nx, ny, nz = x - offset[0], y - offset[1], z - offset[2]
-            # Check bounds
-            if 0 <= nx < shape[0] and 0 <= ny < shape[1] and 0 <= nz < shape[2]:
-                # Update distance if neighbor offers a shorter path
-                dt[x, y, z] = min(dt[x, y, z], dt[nx, ny, nz] + w)
-
-    # Backward pass
-    # Sort voxels in descending z, y, x order to mimic bottom-right-back sweep
-    backward_sorted = np.sort(structured_coords, order=["z", "y", "x"])[::-1]
-    for idx in backward_sorted:
-        x, y, z = idx["x"], idx["y"], idx["z"]
-        for offset, w in zip(neighbours, weights):
-            # Compute neighbor coordinate in the forward direction
-            nx, ny, nz = x + offset[0], y + offset[1], z + offset[2]
-            # Check bounds
-            if 0 <= nx < shape[0] and 0 <= ny < shape[1] and 0 <= nz < shape[2]:
-                # Update distance if neighbor offers a shorter path
-                dt[x, y, z] = min(dt[x, y, z], dt[nx, ny, nz] + w)
+    # Now we sort them, so they follow the order you are looking for
+    indices = np.sort(indices, order=["z", "y", "x"])
+    # Only forward sweep (is already much slower than nested loop both sweeps)
+    for idx in indices:
+        for didx, w in zip(neighbours, weights):    # <- Requires change the structure of 'weights'
+            nidx = np.array([idx["x"], idx["y"], idx["z"]]) - didx
+            if ((0 <= nidx) & (nidx < shape)).all():  # <- Make 'shape' an array
+                dt[*idx] = min(dt[*idx], dt[*nidx] + w)
 
     elapsed = time.time() - start_time
     print(f"Chamfer distance (structured) completed in {elapsed:.4f} seconds.")
+
+    return dt
+
+
+def chamfer_distance_3d_argwhere(img):
+    """Compute the chamfer distance transform with argwhere.
+
+    Chamfer distance transform using argwhere..
+    Performs forward and backward sweeps with integer-weighted neighbors.
+    Includes timing output for performance analysis.
+
+    Parameters:
+        img (np.ndarray): 3D binary array (non-zero = foreground, 0 = background)
+
+    Returns:
+        np.ndarray: Chamfer distance map (same shape as input)
+    """
+    start_time = time.time()
+    # Define chamfer mask: neighbor offsets and weights
+    neighbours = np.array([
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1],
+        [1, 1, 0],
+        [1, 0, 1],
+        [0, 1, 1],
+        [1, 1, 1]
+    ])
+    weights = np.array([3, 3, 3, 4, 4, 4, 5])
+    shape = np.array(img.shape)
+    sx, sy, sz = img.shape
+
+    # Initialize distance map: background = 65535, foreground = 0
+    dt = np.where(img == 0, 65535, 0).astype(np.uint32)
+    # Get background voxel coordinates
+    coords = np.argwhere(img == 0)
+    # Sort coordinates in ascending z, y, x order for forward sweep
+    coords = coords[np.lexsort((coords[:, 0], coords[:, 1], coords[:, 2]))]
+
+    # Forward sweep
+    for pos in coords:
+        x, y, z = pos
+        for offset, w in zip(neighbours, weights):
+            nx, ny, nz = x - offset[0], y - offset[1], z - offset[2]
+            if 0 <= nx < sx and 0 <= ny < sy and 0 <= nz < sz:
+                dt[x, y, z] = min(dt[x, y, z], dt[nx, ny, nz] + w)
+
+
+    # Backward sweep
+    for pos in coords[::-1]:
+        x, y, z = pos
+        for offset, w in zip(neighbours, weights):
+            nx, ny, nz = x + offset[0], y + offset[1], z + offset[2]
+            if 0 <= nx < sx and 0 <= ny < sy and 0 <= nz < sz:
+                dt[x, y, z] = min(dt[x, y, z], dt[nx, ny, nz] + w)
+
+
+    elapsed = time.time() - start_time
+    print(f"Chamfer distance (argwhere) completed in {elapsed:.4f} seconds.")
 
     return dt
 
