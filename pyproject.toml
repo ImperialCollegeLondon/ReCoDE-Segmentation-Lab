@@ -27,8 +27,8 @@ dev = [
     "mkdocs-exclude==1.0.2",
     "mkdocs-material==9.6.12",
     "python-markdown-math==0.9",
-    "ruff-0.14.1",
-    "pre-commit-4.3.0",
+    "ruff==0.14.1",
+    "pre-commit==4.3.0",
 ]
 
 [tool.ruff]
