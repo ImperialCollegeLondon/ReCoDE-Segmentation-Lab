@@ -209,8 +209,8 @@ def chamfer_distance_3d_structured(img):
     """Compute the chamfer distance transform with structured arrays.
 
     Chamfer distance transform using structured arrays and sorted voxel iteration.
-    Performs forward and backward sweeps with integer-weighted neighbors.
-    Includes timing output for performance analysis.
+    Performs single sweep (forward and backward) with integer-weighted neighbors,
+    image padded to avoid if statement.
 
     Parameters:
         img (np.ndarray): 3D binary array (non-zero = foreground, 0 = background)
@@ -220,45 +220,44 @@ def chamfer_distance_3d_structured(img):
     """
     start_time = time.time()
 
-    # Define chamfer mask: neighbor offsets and corresponding weights
-    # These approximate Euclidean distances using integer values
-    neighbours = np.array(
-        [
-            [1, 0, 0],  # x+
-            [0, 1, 0],  # y+
-            [0, 0, 1],  # z+
-            [1, 1, 0],  # x+ y+
-            [1, 0, 1],  # x+ z+
-            [0, 1, 1],  # y+ z+
-            [1, 1, 1],  # x+ y+ z+
-        ]
-    )
-    weights = np.array([3, 3, 3, 4, 4, 4, 5])
+    # Define symmetric chamfer mask: neighbor offsets and weights
+    offsets = [
+        (1, 0, 0, 3), (-1, 0, 0, 3),
+        (0, 1, 0, 3), (0, -1, 0, 3),
+        (0, 0, 1, 3), (0, 0, -1, 3),
+        (1, 1, 0, 4), (-1, -1, 0, 4),
+        (1, 0, 1, 4), (-1, 0, -1, 4),
+        (0, 1, 1, 4), (0, -1, -1, 4),
+        (1, 1, 1, 5), (-1, -1, -1, 5)
+    ]
 
-    # Get shape of input volume as a NumPy array for easy comparison
+    # Pad the input volume with a 1-voxel border
+    padded = np.pad(img == 0, pad_width=1, mode='constant', constant_values=0)
     shape = np.array(img.shape)
 
-    # Define structured dtype for sorting by x, y, z
+    # Initialize distance map: foreground = 0, background = large value
+    dt = np.where(padded, 65535, 0).astype(np.uint32)
+
+    # Get indices of background voxels in original image space
+    indices = np.argwhere(img == 0)
+    indices += 1  # shift to match padded coordinates
+
+    # Convert to structured array for sorting
     dtype = [("x", int), ("y", int), ("z", int)]
-    indices = unstructured_to_structured(np.argwhere(img == 0), dtype=dtype)
+    structured_indices = unstructured_to_structured(indices, dtype=dtype)
+    structured_indices = np.sort(structured_indices, order=["z", "y", "x"])
 
-    # Initialize distance map:
-    # Foreground voxels (non-zero) get 0, background voxels (zero) get large value
-    dt = np.where(img == 0, 65535, 0).astype(np.uint32)
-
-    # Now we sort them, so they follow the order you are looking for
-    indices = np.sort(indices, order=["z", "y", "x"])
-    # Only forward sweep (is already much slower than nested loop both sweeps)
-    for idx in indices:
-        for didx, w in zip(neighbours, weights):    # <- Requires change the structure of 'weights'
-            nidx = np.array([idx["x"], idx["y"], idx["z"]]) - didx
-            if ((0 <= nidx) & (nidx < shape)).all():  # <- Make 'shape' an array
-                dt[*idx] = min(dt[*idx], dt[*nidx] + w)
+    # Combined sweep without boundary checks
+    for idx in structured_indices:
+        x, y, z = idx["x"], idx["y"], idx["z"]
+        for dx, dy, dz, w in offsets:
+            nx, ny, nz = x + dx, y + dy, z + dz
+            dt[z, y, x] = min(dt[z, y, x], dt[nz, ny, nx] + w)
 
     elapsed = time.time() - start_time
     print(f"Chamfer distance (structured) completed in {elapsed:.4f} seconds.")
 
-    return dt
+    return dt[1:-1, 1:-1, 1:-1]
 
 
 def chamfer_distance_3d_argwhere(img):

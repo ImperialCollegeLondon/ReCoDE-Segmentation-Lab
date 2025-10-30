@@ -71,11 +71,11 @@ binary_cubecrop = image3d_cubecrop > thresh_value  # returns a boolean array
 # -----------------------------
 # 4. Apply distance transform and watershed segmentation
 # Compute distance transform
-distance_cubecrop = chamfer_distance_3d(binary_cubecrop)
+#distance_cubecrop = chamfer_distance_3d(binary_cubecrop)
 distance_cubecrop_structured = chamfer_distance_3d_structured(binary_cubecrop)
-distance_cubecrop_argwhere = chamfer_distance_3d_argwhere(binary_cubecrop)
+#distance_cubecrop_argwhere = chamfer_distance_3d_argwhere(binary_cubecrop)
 distance_cubecrop_optimized = chamfer_distance_3d_optimized(binary_cubecrop)
 
 # Create orthogonal slice visualization
-plot_3d_orthogonal_planes(distance_cubecrop_optimized, snapshot_view=(30, 300))
+#plot_3d_orthogonal_planes(distance_cubecrop_optimized, snapshot_view=(30, 300))
 
