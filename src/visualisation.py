@@ -330,6 +330,17 @@ def plot_3d_volume_voxels(volume, threshold_lo=None, threshold_hi=None,
     # Draw voxels
     ax.voxels(filled, facecolors=colors, edgecolors=None)
     
+    # Add colourbar for intensity volumes (not meaningful for binary volumes)
+    if not is_binary:
+        # Create a ScalarMappable to represent the colour mapping
+        # This is needed because ax.voxels() doesn't return a mappable object
+        norm = plt.Normalize(vmin=volume.min(), vmax=volume.max())
+        sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+        sm.set_array([])  # Required for the colourbar to work
+        
+        # Add colourbar to the figure
+        fig.colorbar(sm, ax=ax, pad=0.1, shrink=0.8, label='Intensity')
+    
     # Labels
     ax.set_xlabel('X')
     ax.set_ylabel('Y') 

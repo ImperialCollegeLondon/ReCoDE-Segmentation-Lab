@@ -41,6 +41,6 @@ plot_3d_volume_voxels(distance_map)
 print(f"Our distance transform complete. Max distance: {np.max(distance_map)}")
 
 library_distance = ndi.distance_transform_edt(binary_volume)
-plot_3d_volume_voxels(library_distance, threshold_hi=3)
+plot_3d_volume_voxels(library_distance, threshold_lo=0.1)
 plot_3d_volume_voxels(library_distance)
 print(f"library distance transform complete. Max distance: {np.max(library_distance)}")
