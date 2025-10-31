@@ -109,9 +109,14 @@ def plot_3d_orthogonal_planes(volume, cmap="gray", alpha=1.0, snapshot_view=None
     plt.show()
 
 
-def plot_3d_volume_surface(volume, threshold=None, cmap="viridis", 
-                           alpha=0.5, title="3D Surface Visualisation",
-                           view="default"):
+def plot_3d_volume_surface(
+    volume,
+    threshold=None,
+    cmap="viridis",
+    alpha=0.5,
+    title="3D Surface Visualisation",
+    view="default",
+):
     """Plot 3D volume surface using marching cubes algorithm.
     
     Extracts and renders the surface mesh of a 3D volume using the marching
