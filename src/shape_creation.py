@@ -1,3 +1,14 @@
+#!/usr/bin/env python3
+"""Functions to create example array.
+
+Requirements:
+   - Python 3.11
+   - Required libraries:
+       * numpy
+
+"""
+
+# -----------------------------
 import numpy as np
 
 def create_sphere(volume_shape, centre, radius, intensity):
