@@ -33,7 +33,7 @@ matplotlib.use("TkAgg")  # or 'Qt5Agg'
 import matplotlib.pyplot as plt
 import numpy as np
 from skimage import measure
-    
+
 # -----------------------------
 
 
@@ -118,21 +118,22 @@ def plot_3d_volume_surface(
     view="default",
 ):
     """Plot 3D volume surface using marching cubes algorithm.
-    
+
     Extracts and renders the surface mesh of a 3D volume using the marching
     cubes algorithm from scikit-image. The marching cubes algorithm identifies
     the boundary surface where the volume crosses a threshold value, creating
     a triangulated mesh representation. This approach is efficient for
     visualising volumes of any size.
-    
+
     The function supports multiple viewing perspectives including orthogonal
     views (top, front, side) and custom angles.
-    
+
     Parameters:
         volume (np.ndarray): 3D array of shape (Z, Y, X) containing volumetric data.
                             Can be any numeric type (int, float, etc.)
         threshold (float, optional): Isovalue for surface extraction. The surface
-                                    is extracted where volume values equal this threshold.
+                                    is extracted where volume values equal
+                                    this threshold.
                                     If None, automatically set to the midpoint between
                                     the minimum and maximum values in the volume.
                                     For binary volumes, typically use 0.5.
@@ -144,76 +145,83 @@ def plot_3d_volume_surface(
                       for seeing surface details.
         title (str): Title text displayed above the visualisation
         view (str or tuple): Camera viewing perspective. Options:
-                            - "default": Standard 3D perspective (elevation=30°, azimuth=45°)
+                            - "default": Standard 3D perspective (elevation=30°,
+                            azimuth=45°)
                             - "xy" or "top": Top-down view looking along Z-axis
-                            - "xz" or "front": Front view looking along Y-axis  
+                            - "xz" or "front": Front view looking along Y-axis
                             - "yz" or "side": Side view looking along X-axis
                             - tuple (elev, azim): Custom view with elevation and azimuth
                               angles in degrees. Elevation is angle above the XY plane
                               (0-90°), azimuth is rotation around the Z-axis (0-360°)
-    
+
     Returns:
         None: Displays an interactive matplotlib 3D figure window
-    
+
     Example usages:
         # Extract and view surface from binary segmentation
         plot_3d_volume_surface(binary_volume, threshold=0.5, cmap="gray")
-        
+
         # View distance transform isosurface from the side
         plot_3d_volume_surface(distance_map, threshold=10, cmap="viridis", view="side")
-        
+
         # Custom viewing angle with specific elevation and azimuth
         plot_3d_volume_surface(volume, threshold=100, view=(45, 120))
-        
+
         # View from above (top-down)
         plot_3d_volume_surface(volume, threshold=50, view="top")
-    
+
     Notes:
         - Requires scikit-image for the marching cubes algorithm
         - More efficient than voxel-based rendering for large volumes
         - The resulting plot is interactive: click and drag to rotate,
           scroll to zoom, right-click and drag to pan
-    
+
     References:
         - Lorensen & Cline (1987). "Marching cubes: A high resolution 3D
           surface construction algorithm." SIGGRAPH Computer Graphics, 21(4).
         - scikit-image documentation: https://scikit-image.org/docs/stable/api/skimage.measure.html#marching-cubes
     """
-
     # Determine threshold value if not provided by user
     if threshold is None:
         threshold = (volume.min() + volume.max()) / 2.0
-    
+
     # Extract triangulated surface mesh using marching cubes algorithm
     # Returns vertices (3D coordinates), faces (triangles), normals, and values
-    verts, faces, normals, values = measure.marching_cubes(
+    verts, faces, _normals, _values = measure.marching_cubes(
         volume, level=threshold, spacing=(1.0, 1.0, 1.0)
     )
-    
+
     # Create figure with 3D axes for plotting
     fig = plt.figure(figsize=(10, 10))
-    ax = fig.add_subplot(111, projection='3d')
-    
+    ax = fig.add_subplot(111, projection="3d")
+
     # Render the triangulated surface mesh
-    # verts[:, 2] = X coordinates, verts[:, 1] = Y coordinates, verts[:, 0] = Z coordinates
+    # verts[:, 2] = X coordinates, verts[:, 1] = Y coordinates,
+    # verts[:, 0] = Z coordinates
     mesh = ax.plot_trisurf(
-        verts[:, 2], verts[:, 1], faces, verts[:, 0],
-        cmap=cmap, alpha=alpha, linewidth=0, antialiased=True
+        verts[:, 2],
+        verts[:, 1],
+        faces,
+        verts[:, 0],
+        cmap=cmap,
+        alpha=alpha,
+        linewidth=0,
+        antialiased=True,
     )
-    
+
     # Add colourbar showing the colour scale
     fig.colorbar(mesh, ax=ax, pad=0.1, shrink=0.8)
-    
+
     # Set axis labels
-    ax.set_xlabel('X')
-    ax.set_ylabel('Y')
-    ax.set_zlabel('Z')
+    ax.set_xlabel("X")
+    ax.set_ylabel("Y")
+    ax.set_zlabel("Z")
     ax.set_title(title)
-    
+
     # Set equal aspect ratio to prevent distortion
     # This ensures that one unit in X equals one unit in Y and Z
     ax.set_box_aspect([volume.shape[2], volume.shape[1], volume.shape[0]])
-    
+
     # Configure camera viewing angle based on view parameter
     if isinstance(view, tuple):
         # User provided custom view angles as (elevation, azimuth)
@@ -234,7 +242,7 @@ def plot_3d_volume_surface(
     else:
         # Unrecognised view option, fallback to default
         ax.view_init(elev=30, azim=45)
-    
+
     plt.tight_layout()
     plt.show()
 
@@ -249,14 +257,14 @@ def plot_3d_volume_voxels(
     title=None,
 ):
     """Plot 3D volume by rendering individual voxels.
-    
+
     Creates a 3D visualisation showing volumetric data as discrete coloured cubes.
     Each voxel is rendered based on its intensity value. Works with both binary
     volumes (True/False) and intensity volumes (grayscale values). Supports
     rendering voxels within a specified intensity range.
-    
+
     WARNING: Slow for large volumes (>50³ voxels).
-    
+
     Parameters:
         volume (np.ndarray): 3D array of shape (Z, Y, X) containing volumetric data.
                             Can be binary (bool, 0/1) or intensity values (uint8, float)
@@ -267,20 +275,20 @@ def plot_3d_volume_voxels(
         cmap (str): Matplotlib colourmap name
         alpha (float): Transparency (0.0 = invisible, 1.0 = opaque)
         title (str): Plot title
-    
+
     Returns:
         None: Displays matplotlib figure
-    
+
     Example usage:
         # Binary volume - all True voxels
         plot_3d_volume_voxels(binary_volume, cmap="gray")
-        
+
         # Only voxels with intensity between 10 and 50
         plot_3d_volume_voxels(distance_map, threshold_lo=10, threshold_hi=50)
-        
+
         # Only voxels above 20
         plot_3d_volume_voxels(image3d, threshold_lo=20, cmap="viridis")
-        
+
         # Only voxels below 100
         plot_3d_volume_voxels(image3d, threshold_hi=100, cmap="plasma")
     """
@@ -297,30 +305,26 @@ def plot_3d_volume_voxels(
     else:
         # Both thresholds specified - voxels must be within range
         filled = (volume >= threshold_lo) & (volume <= threshold_hi)
-    
+
     if not np.any(filled):
-        print(f"No voxels to display within threshold range.")
+        print("No voxels to display within threshold range.")
         print(f"Volume range: [{volume.min()}, {volume.max()}]")
         if threshold_lo is not None:
             print(f"Lower threshold: {threshold_lo}")
         if threshold_hi is not None:
             print(f"Upper threshold: {threshold_hi}")
         return
-    
-    # Create figure
-    fig = plt.figure(figsize=(10, 10))
-    ax = fig.add_subplot(111, projection='3d')
-    
+
     # Get colourmap
     cmap_func = plt.cm.get_cmap(cmap)
-    
+
     # Check if volume is binary (only has 0/1 or True/False values)
     unique_vals = np.unique(volume)
     is_binary = len(unique_vals) <= 2 and set(unique_vals).issubset({0, 1, True, False})
-    
+
     if is_binary:
         # For binary volumes, use a constant colour from the colourmap
-        colors = np.zeros(volume.shape + (4,), dtype=float)
+        colors = np.zeros(*volume.shape + 4, dtype=float)
         # Apply the colourmap value for "1" or "True" voxels
         colors[filled] = cmap_func(0.7)  # Use 0.7 position in colourmap
         colors[filled, 3] = alpha
@@ -331,17 +335,17 @@ def plot_3d_volume_voxels(
             norm_volume = (volume - vmin) / (vmax - vmin)
         else:
             norm_volume = np.ones_like(volume, dtype=float) * 0.5
-        
+
         # Create RGBA colour array
         colors = cmap_func(norm_volume)
-        
+
         # Set alpha: transparent for non-filled, specified alpha for filled
         colors[~filled, 3] = 0
         colors[filled, 3] = alpha
-    
+
     # Draw voxels
     ax.voxels(filled, facecolors=colors, edgecolors=None)
-    
+
     # Add colourbar for intensity volumes (not meaningful for binary volumes)
     if not is_binary:
         # Create a ScalarMappable to represent the colour mapping
@@ -349,10 +353,10 @@ def plot_3d_volume_voxels(
         norm = plt.Normalize(vmin=volume.min(), vmax=volume.max())
         sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
         sm.set_array([])  # Required for the colourbar to work
-        
+
         # Add colourbar to the figure
-        fig.colorbar(sm, ax=ax, pad=0.1, shrink=0.8, label='Intensity')
-    
+        plt.colorbar(sm, ax=ax, pad=0.1, shrink=0.8, label="Intensity")
+
     # Labels
     ax.set_xlabel("X")
     ax.set_ylabel("Y")
@@ -446,4 +450,56 @@ def plot_one_panel(
         ax1.set_title(title1)
 
     plt.tight_layout()
+    plt.show()
+
+
+def plot_two_panels(
+    data1,
+    data2,
+    plot_func,
+    projection=None,
+    plot_kwargs1=None,
+    plot_kwargs2=None,
+    title1=None,
+    title2=None,
+    figsize=(16, 8),
+    layout=(1, 2),
+):
+    """Function to create a figure with two subplots.
+
+    Function to create a figure with two subplots and apply
+    a plotting function to each.
+
+    Parameters:
+        data1, data2: The datasets to be plotted in each subplot.
+        plot_func: A function that accepts an Axes object and a dataset,
+        plus optional kwargs.
+        plot_kwargs1, plot_kwargs2: Optional dictionaries of keyword
+        arguments for plot_func.
+        title1, title2: Titles for each subplot.
+        figsize: Size of the overall figure.
+        layout: Tuple indicating subplot layout (rows, cols).
+        projection1, projection2: '3d' or None, for each subplot.
+
+    Returns:
+        None: Displays the matplotlib figure.
+    """
+    if plot_kwargs1 is None:
+        plot_kwargs1 = {}
+    if plot_kwargs2 is None:
+        plot_kwargs2 = {}
+
+    fig = plt.figure(figsize=figsize)
+    ax1 = fig.add_subplot(layout[0], layout[1], 1, projection=projection)
+    ax2 = fig.add_subplot(layout[0], layout[1], 2, projection=projection)
+
+    plot_func(ax1, data1, **plot_kwargs1)
+    if title1 is not None:
+        ax1.set_title(title1,fontsize=20)
+
+    plot_func(ax2, data2, **plot_kwargs2)
+    if title2 is not None:
+        ax2.set_title(title2,fontsize=20)
+
+    plt.subplots_adjust(bottom=0.1,top=0.9,left=0.05,right=0.95)
     plt.show()

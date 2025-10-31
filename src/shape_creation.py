@@ -11,6 +11,8 @@ Requirements:
 # -----------------------------
 import numpy as np
 
+
+# -----------------------------
 def create_sphere(volume_shape, centre, radius, intensity):
     """Create a sphere in a 3D volume.
 

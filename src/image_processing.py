@@ -16,9 +16,10 @@ Requirements:
 
 # -----------------------------
 # Load Python packages
+import time
+
 import numpy as np
 from numpy.lib.recfunctions import unstructured_to_structured
-import time
 
 # -----------------------------
 
@@ -166,7 +167,6 @@ def chamfer_distance_3d(img):
     ]
 
     shape = img.shape
-    sx, sy, sz = shape
 
     # Initialize distance map: background gets large value, foreground gets
     dt = np.where(img == 0, np.max(img.shape), 0).astype(np.uint32)
@@ -233,7 +233,6 @@ def chamfer_distance_3d_structured(img):
 
     # Pad the input volume with a 1-voxel border
     padded = np.pad(img == 0, pad_width=1, mode='constant', constant_values=0)
-    shape = np.array(img.shape)
 
     # Initialize distance map: foreground = 0, background = large value
     dt = np.where(padded, 65535, 0).astype(np.uint32)
@@ -285,7 +284,6 @@ def chamfer_distance_3d_argwhere(img):
         [1, 1, 1]
     ])
     weights = np.array([3, 3, 3, 4, 4, 4, 5])
-    shape = np.array(img.shape)
     sx, sy, sz = img.shape
 
     # Initialize distance map: background = 65535, foreground = 0
@@ -350,6 +348,7 @@ def chamfer_distance_3d_optimized(img):
         distance_map = chamfer_distance_3d_optimized(binary_volume)
 
     ------------------------------------------------------------------------
+
     References:
     - Borgefors, G. (1986). "Distance transformations in digital images."
       Computer Vision, Graphics, and Image Processing, 34(3), 344-371.
@@ -357,20 +356,20 @@ def chamfer_distance_3d_optimized(img):
     - Stack Overflow: https://stackoverflow.com/questions/53678520/speed-up-computation-for-distance-transform-on-image-in-python
     - https://www.slingacademy.com/article/understanding-numpy-roll-function-6-examples/
     """
-    # Start timing
-    start_time = time.time()
-
     # Define chamfer mask: each tuple is (dx, dy, dz, weight)
     # These represent relative neighbor positions and their associated movement cost.
     # Includes both positive and negative directions to ensure symmetric propagation.
+    sqrt2 = np.sqrt(2)
+    sqrt3 = np.sqrt(3)
+
     offsets = [
         (1, 0, 0, 1.0), (-1, 0, 0, 1.0),
         (0, 1, 0, 1.0), (0, -1, 0, 1.0),
         (0, 0, 1, 1.0), (0, 0, -1, 1.0),
-        (1, 1, 0, 1.414), (-1, -1, 0, 1.414),
-        (1, 0, 1, 1.414), (-1, 0, -1, 1.414),
-        (0, 1, 1, 1.414), (0, -1, -1, 1.414),
-        (1, 1, 1, 1.732), (-1, -1, -1, 1.732),
+        (1, 1, 0, sqrt2), (-1, -1, 0, sqrt2),
+        (1, 0, 1, sqrt2), (-1, 0, -1, sqrt2),
+        (0, 1, 1, sqrt2), (0, -1, -1, sqrt2),
+        (1, 1, 1, sqrt3), (-1, -1, -1, sqrt3),
     ]
 
     # Pad the input volume with a 1-voxel border to simplify boundary handling.
@@ -389,21 +388,23 @@ def chamfer_distance_3d_optimized(img):
         prev_dt = dt.copy()
 
         for dx, dy, dz, w in offsets:
-            # Shift the entire distance map by (dx, dy, dz) to simulate neighbor access.
-            # This gives the neighbor values for every voxel in one operation.
+            # Shift the entire distance map by (dx, dy, dz) to
+            # simulate neighbor access.
+            # This gives the neighbor values for every voxel in
+            # one operation.
             shifted = np.roll(dt, shift=(dx, dy, dz), axis=(0, 1, 2))
-            # Update each voxel with the minimum of its current value and the neighbor's value + weight.
-            # This is the core of the chamfer propagation: finding shorter paths via neighbors.
+            # Update each voxel with the minimum of its current value
+            # and the neighbor's value + weight.
+            # This is the core of the chamfer propagation: finding
+            # shorter paths via neighbors.
             dt = np.minimum(dt, shifted + w)
 
         # Check for convergence: if no values changed, break early
         if np.array_equal(dt, prev_dt):
-            elapsed = time.time() - start_time
-            print(f"Converged after {i+1} iterations. Time Distance Transform:  {elapsed:.4f} seconds.")
+            print(f"Chamfer converged after {i + 1} iterations. ")
             break
     else:
-        elapsed = time.time() - start_time
-        print(f"Reached max_iter={max_iter} without full convergence. Time Distance Transform: {elapsed:.4f} seconds.")
+        print(f"Reached max_iter={max_iter} without full convergence.")
 
     # Remove the padding to return a result of the original shape.
     return dt[1:-1, 1:-1, 1:-1]
