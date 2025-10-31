@@ -364,20 +364,13 @@ def chamfer_distance_3d_optimized(img):
     # These represent relative neighbor positions and their associated movement cost.
     # Includes both positive and negative directions to ensure symmetric propagation.
     offsets = [
-        (1, 0, 0, 3),
-        (-1, 0, 0, 3),  # axis-aligned neighbors (x-direction)
-        (0, 1, 0, 3),
-        (0, -1, 0, 3),  # axis-aligned neighbors (y-direction)
-        (0, 0, 1, 3),
-        (0, 0, -1, 3),  # axis-aligned neighbors (z-direction)
-        (1, 1, 0, 4),
-        (-1, -1, 0, 4),  # face-diagonal neighbors (xy-plane)
-        (1, 0, 1, 4),
-        (-1, 0, -1, 4),  # face-diagonal neighbors (xz-plane)
-        (0, 1, 1, 4),
-        (0, -1, -1, 4),  # face-diagonal neighbors (yz-plane)
-        (1, 1, 1, 5),
-        (-1, -1, -1, 5),  # corner-diagonal neighbors (xyz-space)
+        (1, 0, 0, 1.0), (-1, 0, 0, 1.0),
+        (0, 1, 0, 1.0), (0, -1, 0, 1.0),
+        (0, 0, 1, 1.0), (0, 0, -1, 1.0),
+        (1, 1, 0, 1.414), (-1, -1, 0, 1.414),
+        (1, 0, 1, 1.414), (-1, 0, -1, 1.414),
+        (0, 1, 1, 1.414), (0, -1, -1, 1.414),
+        (1, 1, 1, 1.732), (-1, -1, -1, 1.732),
     ]
 
     # Pad the input volume with a 1-voxel border to simplify boundary handling.
