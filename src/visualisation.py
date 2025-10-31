@@ -354,10 +354,96 @@ def plot_3d_volume_voxels(
         fig.colorbar(sm, ax=ax, pad=0.1, shrink=0.8, label='Intensity')
     
     # Labels
-    ax.set_xlabel('X')
-    ax.set_ylabel('Y') 
-    ax.set_zlabel('Z')
-    ax.set_title(title)
-    
+    ax.set_xlabel("X")
+    ax.set_ylabel("Y")
+    ax.set_zlabel("Z")
+    if title is not None:
+        ax.set_title(title)
+
+
+def plot_2d_slice_with_values(
+    ax, volume, axis=0, slice_index=None, cmap="viridis", title=None
+):
+    """Plot a 2D slice from a 3D volume with a grid and voxel values.
+
+    Parameters:
+        volume (np.ndarray): 3D numpy array.
+        axis (int): Axis normal to the slice (0, 1, or 2).
+        slice_index (int, optional): Index of the slice to extract.
+        If None, uses the central slice.
+        cmap (str): Matplotlib colormap for background shading.
+
+    Returns:
+        None
+    """
+    assert volume.ndim == 3, "Input volume must be 3D"
+    assert axis in (0, 1, 2), "Axis must be 0, 1, or 2"
+
+    # Determine slice index
+    if slice_index is None:
+        slice_index = volume.shape[axis] // 2
+
+    # Extract the 2D slice
+    if axis == 0:
+        slice_2d = volume[slice_index, :, :]
+    elif axis == 1:
+        slice_2d = volume[:, slice_index, :]
+    else:
+        slice_2d = volume[:, :, slice_index]
+
+    ax.imshow(slice_2d, cmap=cmap, origin="upper")
+
+    # Draw grid lines
+    ax.set_xticks(np.arange(-0.5, slice_2d.shape[1], 1), minor=True)
+    ax.set_yticks(np.arange(-0.5, slice_2d.shape[0], 1), minor=True)
+    ax.grid(which="minor", color="black", linestyle="-", linewidth=0.5)
+    ax.tick_params(which="minor", size=0)
+    ax.set_xticks([])
+    ax.set_yticks([])
+
+    if title is not None:
+        ax.set_title(title)
+
+    # Annotate voxel values
+    for i in range(slice_2d.shape[0]):
+        for j in range(slice_2d.shape[1]):
+            val = slice_2d[i, j]
+            ax.text(
+                j, i, f"{val:.1f}", ha="center", va="center", color="white", fontsize=8
+            )
+
+
+def plot_one_panel(
+    data1, plot_func, projection=None, plot_kwargs1=None, title1=None, figsize=(8, 8)
+):
+    """Function to create a figure with one subplot.
+
+    Function to create a figure with one subplot. and apply a
+    plotting function to it.
+
+    Parameters:
+        data1, data2: The datasets to be plotted in each subplot.
+        plot_func: A function that accepts an Axes object and a dataset, plus
+        optional kwargs.
+        plot_kwargs1, plot_kwargs2: Optional dictionaries of keyword arguments
+        for plot_func.
+        title1, title2: Titles for each subplot.
+        figsize: Size of the overall figure.
+        layout: Tuple indicating subplot layout (rows, cols).
+        projection1, projection2: '3d' or None, for each subplot.
+
+    Returns:
+        None: Displays the matplotlib figure.
+    """
+    if plot_kwargs1 is None:
+        plot_kwargs1 = {}
+
+    fig = plt.figure(figsize=figsize)
+    ax1 = fig.add_subplot(1, 1, 1, projection=projection)
+
+    plot_func(ax1, data1, **plot_kwargs1)
+    if title1 is not None:
+        ax1.set_title(title1)
+
     plt.tight_layout()
     plt.show()
