@@ -260,10 +260,10 @@ def plot_3d_volume_voxels(
     Parameters:
         volume (np.ndarray): 3D array of shape (Z, Y, X) containing volumetric data.
                             Can be binary (bool, 0/1) or intensity values (uint8, float)
-        threshold_lo (float, optional): Lower threshold - only display voxels with values
-                                       above or equal to this. If None, no lower limit.
-        threshold_hi (float, optional): Upper threshold - only display voxels with values
-                                       below or equal to this. If None, no upper limit.
+        threshold_lo (float, optional): Lower threshold - only display voxels with
+        values above or equal to this. If None, no lower limit.
+        threshold_hi (float, optional): Upper threshold - only display voxels with
+        values below or equal to this. If None, no upper limit.
         cmap (str): Matplotlib colourmap name
         alpha (float): Transparency (0.0 = invisible, 1.0 = opaque)
         title (str): Plot title
