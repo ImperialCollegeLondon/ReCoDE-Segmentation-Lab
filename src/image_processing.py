@@ -382,7 +382,7 @@ def chamfer_distance_3d_optimized(img):
 
     # Pad the input volume with a 1-voxel border to simplify boundary handling.
     # Padding ensures that neighbor access won't go out of bounds.
-    padded = np.pad(img == 0, pad_width=1, mode='constant', constant_values=0)
+    padded = np.pad(img != 0, pad_width=1, mode='constant', constant_values=0)
 
     # Initialize the distance map:
     # Foreground voxels (non-zero in original image) get distance 0.
