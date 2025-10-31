@@ -7,7 +7,7 @@ from scipy import ndimage as ndi
 from skimage import filters
 
 from image_processing import chamfer_distance_3d, otsu_threshold
-from shape_creation import create_two_spheres_example
+from src.shape_creation import create_two_spheres_example
 
 
 @pytest.fixture
