@@ -239,8 +239,15 @@ def plot_3d_volume_surface(
     plt.show()
 
 
-def plot_3d_volume_voxels(volume, threshold_lo=None, threshold_hi=None, 
-                          cmap="coolwarm", alpha=0.8, title="3D Voxel Visualisation"):
+def plot_3d_volume_voxels(
+    ax,
+    volume,
+    threshold_lo=None,
+    threshold_hi=None,
+    cmap="viridis",
+    alpha=0.8,
+    title=None,
+):
     """Plot 3D volume by rendering individual voxels.
     
     Creates a 3D visualisation showing volumetric data as discrete coloured cubes.
