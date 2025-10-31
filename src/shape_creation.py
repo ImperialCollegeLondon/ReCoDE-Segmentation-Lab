@@ -53,8 +53,8 @@ def create_two_spheres_example(centre1,centre2,radius1,radius2):
     # Add large sphere (intensity 200)
     large_sphere = create_sphere(
         volume_shape=image3d.shape,
-        centre=(6,6,6),  # Centred in volume
-        radius=2,
+        centre=centre1,  # Centred in volume
+        radius=radius1,
         intensity=200,
     )
     image3d = np.maximum(image3d, large_sphere)
