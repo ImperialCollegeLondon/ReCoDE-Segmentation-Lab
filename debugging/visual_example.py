@@ -1,0 +1,46 @@
+import numpy as np
+
+from image_processing import (
+    otsu_threshold,
+    chamfer_distance_3d,
+)
+from visualisation import plot_3d_volume_surface, plot_3d_volume_voxels
+from shape_creation import create_two_spheres_example
+from scipy import ndimage as ndi
+
+image3d = create_two_spheres_example()
+
+# Custom angle (elevation=45°, azimuth=120°)
+plot_3d_volume_voxels(image3d)
+plot_3d_volume_surface(image3d, view=(45, 120))
+
+# -----------------------------
+# 2. Calculate Otsu threshold and create binary image
+
+# Compute optimal threshold value using Otsu's method
+thresh_value = otsu_threshold(image3d)
+print(f"Otsu threshold value: {thresh_value}")
+
+# Apply threshold to create binary segmentation
+binary_volume = image3d > thresh_value
+plot_3d_volume_voxels(binary_volume, cmap="gray")
+plot_3d_volume_surface(binary_volume, view=(45, 120))
+print(
+    f"Binary volume contains {np.count_nonzero(binary_volume)} foreground voxels"
+)
+
+# -----------------------------
+# 3. Apply distance transform
+
+# Compute chamfer distance transform on binary volume
+# Distance map shows distance from each background voxel to nearest foreground
+distance_map = chamfer_distance_3d(binary_volume)
+
+plot_3d_volume_voxels(distance_map, threshold_hi=3)
+plot_3d_volume_voxels(distance_map)
+print(f"Our distance transform complete. Max distance: {np.max(distance_map)}")
+
+library_distance = ndi.distance_transform_edt(binary_volume)
+plot_3d_volume_voxels(library_distance, threshold_lo=0.1)
+plot_3d_volume_voxels(library_distance)
+print(f"library distance transform complete. Max distance: {np.max(library_distance)}")

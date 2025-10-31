@@ -169,7 +169,7 @@ def chamfer_distance_3d(img):
     sx, sy, sz = shape
 
     # Initialize distance map: background gets large value, foreground gets
-    dt = np.where(img == 0, 65535, 0).astype(np.uint32)
+    dt = np.where(img == 0, np.max(img.shape), 0).astype(np.uint32)
 
     # Forward pass: iterate from top-left-front to bottom-right-back
     for z in range(shape[2]):
