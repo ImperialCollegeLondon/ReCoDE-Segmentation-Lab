@@ -38,7 +38,15 @@ def create_sphere(volume_shape, centre, radius, intensity):
 
     return (sphere_mask * intensity).astype(np.uint8)
 
-def create_two_spheres_example():
+def create_two_spheres_example(centre1,centre2,radius1,radius2):
+    """Function to create a example image.
+
+    Generates an example array, containing two spheres.
+
+    Returns:
+        np.ndarray: 10x10x10 3D array with two spheres
+
+    """
     volume_size = 10
     image3d = np.zeros((volume_size, volume_size, volume_size), dtype=np.uint8)
 
