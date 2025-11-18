@@ -5,7 +5,7 @@ from image_processing import (
     chamfer_distance_3d,
 )
 from visualisation import plot_3d_volume_surface, plot_3d_volume_voxels
-from shape_creation import create_two_spheres_example
+from src.shape_creation import create_two_spheres_example
 from scipy import ndimage as ndi
 
 image3d = create_two_spheres_example()

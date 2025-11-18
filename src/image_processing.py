@@ -16,9 +16,10 @@ Requirements:
 
 # -----------------------------
 # Load Python packages
+import time
+
 import numpy as np
 from numpy.lib.recfunctions import unstructured_to_structured
-import time
 
 # -----------------------------
 
@@ -33,7 +34,7 @@ def otsu_threshold(array3d):
     commonly used in image stacks.
 
     Mathematical background:
-    Otsu's method selects the threshold that maximizes the between-class variance 
+    Otsu's method selects the threshold that maximizes the between-class variance
     sigma_b^2(t), which quantifies how well the image is separated into foreground and
     background.
 
@@ -52,9 +53,9 @@ def otsu_threshold(array3d):
 
     References:
     - Wikipedia overview: https://en.wikipedia.org/wiki/Otsu%27s_method
-    - Chityala, Ravishankar, and Sridevi Pudipeddi. "Image Processing and Acquisition 
+    - Chityala, Ravishankar, and Sridevi Pudipeddi. "Image Processing and Acquisition
       Using Python. Second edition." Boca Raton: Chapman & Hall/CRC, 2020. Print.
-    - Original paper: Otsu, N. (1979). "A threshold selection method from gray-level 
+    - Original paper: Otsu, N. (1979). "A threshold selection method from gray-level
       histograms." IEEE Transactions on Systems, Man, and Cybernetics, 9(1), 62-66.
 
     Parameters:
@@ -109,14 +110,14 @@ def chamfer_distance_3d(img):
     Compute the chamfer distance transform of a 3D binary NumPy array.
 
     This function approximates the Euclidean distance transform using a chamfer mask,
-    which propagates integer-valued distances through local neighborhoods. It is 
-    suitable for binary 3D arrays where foreground voxels are non-zero and background 
+    which propagates integer-valued distances through local neighborhoods. It is
+    suitable for binary 3D arrays where foreground voxels are non-zero and background
     voxels are zero.
 
     Mathematical background:
-    The chamfer method uses a fixed set of weighted offsets to simulate Euclidean 
-    distances through iterative forward and backward passes. Each voxel updates its 
-    value based on neighboring voxels and predefined weights, approximating the 
+    The chamfer method uses a fixed set of weighted offsets to simulate Euclidean
+    distances through iterative forward and backward passes. Each voxel updates its
+    value based on neighboring voxels and predefined weights, approximating the
     shortest path to the nearest foreground voxel.
 
     This implementation uses a 3x3x3 mask with integer weights:
@@ -125,19 +126,19 @@ def chamfer_distance_3d(img):
         - 5 for corner-diagonal neighbors
 
     The algorithm consists of two phases:
-        - Forward pass: propagates distances from top-left-front to 
+        - Forward pass: propagates distances from top-left-front to
           bottom-right-back
-        - Backward pass: refines distances from bottom-right-back to 
+        - Backward pass: refines distances from bottom-right-back to
           top-left-front
 
     This method is significantly faster than exact Euclidean transforms and is well-
     suited for large volumes where performance is critical.
 
     References:
-    - Borgefors, G. (1986). "Distance transformations in digital images." 
+    - Borgefors, G. (1986). "Distance transformations in digital images."
       Computer Vision, Graphics, and Image Processing, 34(3), 344-371.
     - Wikipedia overview: https://en.wikipedia.org/wiki/Distance_transform#Chamfer_distance_transform
-    - Stack Overflow discussion on NumPy-only distance transform performance: 
+    - Stack Overflow discussion on NumPy-only distance transform performance:
       https://stackoverflow.com/questions/53678520/speed-up-computation-for-distance-transform-on-image-in-python
 
     Parameters:
@@ -145,7 +146,7 @@ def chamfer_distance_3d(img):
                           and non-zero for foreground.
 
     Returns:
-        np.ndarray: 3D array of same shape with chamfer distances (integer 
+        np.ndarray: 3D array of same shape with chamfer distances (integer
                     approximation of Euclidean distance).
 
     Example usage:
@@ -166,7 +167,6 @@ def chamfer_distance_3d(img):
     ]
 
     shape = img.shape
-    sx, sy, sz = shape
 
     # Initialize distance map: background gets large value, foreground gets
     dt = np.where(img == 0, np.max(img.shape), 0).astype(np.uint32)
@@ -222,18 +222,24 @@ def chamfer_distance_3d_structured(img):
 
     # Define symmetric chamfer mask: neighbor offsets and weights
     offsets = [
-        (1, 0, 0, 3), (-1, 0, 0, 3),
-        (0, 1, 0, 3), (0, -1, 0, 3),
-        (0, 0, 1, 3), (0, 0, -1, 3),
-        (1, 1, 0, 4), (-1, -1, 0, 4),
-        (1, 0, 1, 4), (-1, 0, -1, 4),
-        (0, 1, 1, 4), (0, -1, -1, 4),
-        (1, 1, 1, 5), (-1, -1, -1, 5)
+        (1, 0, 0, 3),
+        (-1, 0, 0, 3),
+        (0, 1, 0, 3),
+        (0, -1, 0, 3),
+        (0, 0, 1, 3),
+        (0, 0, -1, 3),
+        (1, 1, 0, 4),
+        (-1, -1, 0, 4),
+        (1, 0, 1, 4),
+        (-1, 0, -1, 4),
+        (0, 1, 1, 4),
+        (0, -1, -1, 4),
+        (1, 1, 1, 5),
+        (-1, -1, -1, 5),
     ]
 
     # Pad the input volume with a 1-voxel border
-    padded = np.pad(img == 0, pad_width=1, mode='constant', constant_values=0)
-    shape = np.array(img.shape)
+    padded = np.pad(img == 0, pad_width=1, mode="constant", constant_values=0)
 
     # Initialize distance map: foreground = 0, background = large value
     dt = np.where(padded, 65535, 0).astype(np.uint32)
@@ -275,17 +281,10 @@ def chamfer_distance_3d_argwhere(img):
     """
     start_time = time.time()
     # Define chamfer mask: neighbor offsets and weights
-    neighbours = np.array([
-        [1, 0, 0],
-        [0, 1, 0],
-        [0, 0, 1],
-        [1, 1, 0],
-        [1, 0, 1],
-        [0, 1, 1],
-        [1, 1, 1]
-    ])
+    neighbours = np.array(
+        [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0, 1, 1], [1, 1, 1]]
+    )
     weights = np.array([3, 3, 3, 4, 4, 4, 5])
-    shape = np.array(img.shape)
     sx, sy, sz = img.shape
 
     # Initialize distance map: background = 65535, foreground = 0
@@ -303,7 +302,6 @@ def chamfer_distance_3d_argwhere(img):
             if 0 <= nx < sx and 0 <= ny < sy and 0 <= nz < sz:
                 dt[x, y, z] = min(dt[x, y, z], dt[nx, ny, nz] + w)
 
-
     # Backward sweep
     for pos in coords[::-1]:
         x, y, z = pos
@@ -311,7 +309,6 @@ def chamfer_distance_3d_argwhere(img):
             nx, ny, nz = x + offset[0], y + offset[1], z + offset[2]
             if 0 <= nx < sx and 0 <= ny < sy and 0 <= nz < sz:
                 dt[x, y, z] = min(dt[x, y, z], dt[nx, ny, nz] + w)
-
 
     elapsed = time.time() - start_time
     print(f"Chamfer distance (argwhere) completed in {elapsed:.4f} seconds.")
@@ -350,6 +347,7 @@ def chamfer_distance_3d_optimized(img):
         distance_map = chamfer_distance_3d_optimized(binary_volume)
 
     ------------------------------------------------------------------------
+
     References:
     - Borgefors, G. (1986). "Distance transformations in digital images."
       Computer Vision, Graphics, and Image Processing, 34(3), 344-371.
@@ -357,32 +355,32 @@ def chamfer_distance_3d_optimized(img):
     - Stack Overflow: https://stackoverflow.com/questions/53678520/speed-up-computation-for-distance-transform-on-image-in-python
     - https://www.slingacademy.com/article/understanding-numpy-roll-function-6-examples/
     """
-    # Start timing
-    start_time = time.time()
-
     # Define chamfer mask: each tuple is (dx, dy, dz, weight)
     # These represent relative neighbor positions and their associated movement cost.
     # Includes both positive and negative directions to ensure symmetric propagation.
+    sqrt2 = np.sqrt(2)
+    sqrt3 = np.sqrt(3)
+
     offsets = [
-        (1, 0, 0, 3),
-        (-1, 0, 0, 3),  # axis-aligned neighbors (x-direction)
-        (0, 1, 0, 3),
-        (0, -1, 0, 3),  # axis-aligned neighbors (y-direction)
-        (0, 0, 1, 3),
-        (0, 0, -1, 3),  # axis-aligned neighbors (z-direction)
-        (1, 1, 0, 4),
-        (-1, -1, 0, 4),  # face-diagonal neighbors (xy-plane)
-        (1, 0, 1, 4),
-        (-1, 0, -1, 4),  # face-diagonal neighbors (xz-plane)
-        (0, 1, 1, 4),
-        (0, -1, -1, 4),  # face-diagonal neighbors (yz-plane)
-        (1, 1, 1, 5),
-        (-1, -1, -1, 5),  # corner-diagonal neighbors (xyz-space)
+        (1, 0, 0, 1.0),
+        (-1, 0, 0, 1.0),
+        (0, 1, 0, 1.0),
+        (0, -1, 0, 1.0),
+        (0, 0, 1, 1.0),
+        (0, 0, -1, 1.0),
+        (1, 1, 0, sqrt2),
+        (-1, -1, 0, sqrt2),
+        (1, 0, 1, sqrt2),
+        (-1, 0, -1, sqrt2),
+        (0, 1, 1, sqrt2),
+        (0, -1, -1, sqrt2),
+        (1, 1, 1, sqrt3),
+        (-1, -1, -1, sqrt3),
     ]
 
     # Pad the input volume with a 1-voxel border to simplify boundary handling.
     # Padding ensures that neighbor access won't go out of bounds.
-    padded = np.pad(img == 0, pad_width=1, mode='constant', constant_values=0)
+    padded = np.pad(img != 0, pad_width=1, mode="constant", constant_values=0)
 
     # Initialize the distance map:
     # Foreground voxels (non-zero in original image) get distance 0.
@@ -396,22 +394,176 @@ def chamfer_distance_3d_optimized(img):
         prev_dt = dt.copy()
 
         for dx, dy, dz, w in offsets:
-            # Shift the entire distance map by (dx, dy, dz) to simulate neighbor access.
-            # This gives the neighbor values for every voxel in one operation.
+            # Shift the entire distance map by (dx, dy, dz) to
+            # simulate neighbor access.
+            # This gives the neighbor values for every voxel in
+            # one operation.
             shifted = np.roll(dt, shift=(dx, dy, dz), axis=(0, 1, 2))
-            # Update each voxel with the minimum of its current value and the neighbor's value + weight.
-            # This is the core of the chamfer propagation: finding shorter paths via neighbors.
+            # Update each voxel with the minimum of its current value
+            # and the neighbor's value + weight.
+            # This is the core of the chamfer propagation: finding
+            # shorter paths via neighbors.
             dt = np.minimum(dt, shifted + w)
 
         # Check for convergence: if no values changed, break early
         if np.array_equal(dt, prev_dt):
-            elapsed = time.time() - start_time
-            print(f"Converged after {i+1} iterations. Time Distance Transform:  {elapsed:.4f} seconds.")
+            print(f"Chamfer converged after {i + 1} iterations. ")
             break
     else:
-        elapsed = time.time() - start_time
-        print(f"Reached max_iter={max_iter} without full convergence. Time Distance Transform: {elapsed:.4f} seconds.")
+        print(f"Reached max_iter={max_iter} without full convergence.")
 
     # Remove the padding to return a result of the original shape.
     return dt[1:-1, 1:-1, 1:-1]
 
+
+def find_local_minima(img):
+    """Determine the local minima of an image.
+
+    This function determines the local minima of an image.
+    It takes all 26 neighbours into consideration and obtains
+    absolute local minima.
+
+    Parameters:
+         img (np.ndarray): 3D array, ideally the
+         distance transform of an image
+
+    Returns:
+        np.ndarray: number of local minimax3
+
+    """
+    # Step 1: Pad the array with +inf to handle boundary conditions safely
+    padded = np.pad(img, pad_width=1, mode="constant", constant_values=np.inf)
+
+    # Step 2: Extract the center region (same shape as original array)
+    center = padded[1:-1, 1:-1, 1:-1]
+
+    # Step 3: Generate all 26 neighbor offsets
+    # This creates a 3x3x3 grid of offsets, then filters out the (0, 0, 0) center
+    dx, dy, dz = np.meshgrid([-1, 0, 1], [-1, 0, 1], [-1, 0, 1], indexing="ij")
+    offsets = np.stack([dx.ravel(), dy.ravel(), dz.ravel()], axis=1)
+    offsets = offsets[np.any(offsets != 0, axis=1)]  # Remove the center offset
+
+    # Step 4: Collect all 26 neighbor slices using the offsets
+    # Each neighbor is a shifted view of the padded array
+    neighbors = np.stack(
+        [
+            padded[
+                1 + ox : 1 + ox + img.shape[0],
+                1 + oy : 1 + oy + img.shape[1],
+                1 + oz : 1 + oz + img.shape[2],
+            ]
+            for ox, oy, oz in offsets
+        ],
+        axis=0,
+    )  # Shape: (26, X, Y, Z)
+
+    # Step 5: Compare the center voxel to all 26 neighbors
+    # A voxel is a local minimum if it's smaller than all neighbors
+    is_min = np.all(center < neighbors, axis=0)  # Shape: (X, Y, Z)
+
+    # Step 6: Label each minimum voxel with a unique integer
+    labels = np.zeros_like(img, dtype=np.int32)
+    coords = np.argwhere(is_min)
+    for i, (z, y, x) in enumerate(coords, start=1):
+        labels[z, y, x] = i
+
+    return labels
+
+
+def watershed_3d(distance, binary, marker):
+    """Watershed algorithm.
+
+    This function executes a simple version of the Meyer's flooding algorithm.
+
+    This function implements a voxel-wise 3D watershed on a distance-transformed
+    image. It propagates labels from a marker array to segment connected regions
+    within a binary mask based on distance levels. It is roughly based on
+    Meyer's flooding algorithm.
+
+    Parameters:
+        distance (np.ndarray): 3D array representing the distance transform
+            of the image. Higher values indicate voxels farther from the background.
+        binary (np.ndarray): 3D boolean array defining the region to segment.
+        marker (np.ndarray): 3D array of initial seed labels for local minima.
+
+    Returns:
+        np.ndarray: 4D array of shape (num_levels, X, Y, Z) containing the
+        watershed labels at each distance level. The last element along the
+        first axis corresponds to the fully flooded label map.
+
+    Notes:
+        - The function may be slow for large 3D images due to voxel-wise iteration.
+
+    References:
+        - https://en.wikipedia.org/wiki/Watershed_(image_processing)
+
+    """
+    # Get and sort distance levels
+    distance_levels = np.unique(distance)[::-1]
+
+    # Initialize arrays
+    labels = np.zeros_like(distance)
+    labels_levels = np.zeros((len(distance_levels), *distance.shape), dtype=int)
+
+    for dl_i in range(len(distance_levels) - 1):
+        labels_step = labels.copy()
+
+        # Create mask of new distance level (only new level is true)
+        dl = np.logical_and(distance == distance_levels[dl_i], binary)
+        # Extract coordinates of every voxel which is part of the new level
+        dl_coords = np.argwhere(dl)
+        shape = np.array(dl.shape)
+
+        # 26-connected neighbor offsets
+        offsets = np.array(np.meshgrid([-1, 0, 1], [-1, 0, 1], [-1, 0, 1])).T.reshape(
+            -1, 3
+        )
+        # Remove the center voxel itself
+        neighbors = offsets[np.any(offsets != 0, axis=1)]
+
+        for idx, (x, y, z) in enumerate(dl_coords):
+            # Compute neighbor coordinates of voxel
+            neigh = neigh = neighbors + np.array([x, y, z])
+
+            # Check if all neighbors are inside the image boundaries
+            valid = np.all((neigh >= 0) & (neigh < shape), axis=1)
+            neigh = neigh[valid]
+
+            # unpack into separate arrays for indexing
+            nx, ny, nz = neigh.T
+
+            # Compare against labeled array (only previous level at this step)
+            neig_values = labels[nx, ny, nz]
+
+            # Check if any of the neighbors are not false,
+            # i.e. already part of a labeled region
+            if np.all(neig_values == 0):
+                # This must be a new local minima
+                # Check label from markers
+                labels_step[x, y, z] = marker[x, y, z]
+            else:
+                # Has true neighbors at previous level
+                # Reduce to only true neighbores
+                neig_true = neig_values[neig_values != 0]
+
+                if neig_true.size == 1:
+                    # Only one labelled neighbor (must be part of the region)
+                    labels_step[x, y, z] = neig_true
+                elif np.all(neig_true == neig_true[0]):
+                    # Multiple labelled neighbors, but of the same labelled region
+                    # (must be same label region)
+                    # This can in theory be replaced, else would result in the same.
+                    labels_step[x, y, z] = neig_true[0]
+                else:
+                    # Multiple labelled neighbors, of different regions
+                    # Voxel is assigned to region that has more bordering voxels
+                    _values, counts = np.unique(neig_true, return_counts=True)
+                    labels_step[x, y, z] = neig_true[np.argmax(counts)]
+
+        # Update labels and store in output array
+        labels = labels_step
+        # Output array hold the progressing/flooding steps
+        # Needs to be removed for larger images
+        labels_levels[dl_i] = labels_step
+
+    return labels_levels

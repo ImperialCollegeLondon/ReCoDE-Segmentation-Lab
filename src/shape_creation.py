@@ -1,5 +1,18 @@
+#!/usr/bin/env python3
+"""Functions to create example array.
+
+Requirements:
+   - Python 3.11
+   - Required libraries:
+       * numpy
+
+"""
+
+# -----------------------------
 import numpy as np
 
+
+# -----------------------------
 def create_sphere(volume_shape, centre, radius, intensity):
     """Create a sphere in a 3D volume.
 
@@ -27,15 +40,23 @@ def create_sphere(volume_shape, centre, radius, intensity):
 
     return (sphere_mask * intensity).astype(np.uint8)
 
-def create_two_spheres_example():
+def create_two_spheres_example(centre1,centre2,radius1,radius2):
+    """Function to create a example image.
+
+    Generates an example array, containing two spheres.
+
+    Returns:
+        np.ndarray: 10x10x10 3D array with two spheres
+
+    """
     volume_size = 10
     image3d = np.zeros((volume_size, volume_size, volume_size), dtype=np.uint8)
 
     # Add large sphere (intensity 200)
     large_sphere = create_sphere(
         volume_shape=image3d.shape,
-        centre=(6,6,6),  # Centred in volume
-        radius=2,
+        centre=centre1,  # Centred in volume
+        radius=radius1,
         intensity=200,
     )
     image3d = np.maximum(image3d, large_sphere)
@@ -43,8 +64,8 @@ def create_two_spheres_example():
     # Add small sphere (intensity 180)
     small_sphere = create_sphere(
         volume_shape=image3d.shape,
-        centre=(2, 2, 2),  # Offset position
-        radius=1,
+        centre=centre2,  # Offset position
+        radius=radius2,
         intensity=180,
     )
     image3d = np.maximum(image3d, small_sphere)
