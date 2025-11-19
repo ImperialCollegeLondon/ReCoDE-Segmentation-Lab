@@ -37,7 +37,8 @@ from image_processing import (
 from shape_creation import create_two_spheres_example
 from visualisation import (
     plot_3d_volume_voxels,
-    plot_two_panels,
+    plot_panels,
+    plot_2d_slice_with_values,
 )
 
 # -----------------------------
@@ -88,12 +89,15 @@ print(
 #                 plot_kwargs2={'threshold_lo': 1,'threshold_hi': 3},
 #                 title1='Chamfer distance',title2='Exact Euclidean distance')
 
-# Plot 2d slice of distance transfer, showing values
-# plot_two_panels(DT, DT_lib,
-#                 plot_func=plot_2d_slice_with_values,
-#                 plot_kwargs1={'slice_index': 4},
-#                 plot_kwargs2={'slice_index': 4},
-#                 title1='Chamfer distance',title2='Exact Euclidean distance')
+
+plot_panels(
+    n=2,
+    data_list=[DT, DT_lib],
+    plot_func=plot_2d_slice_with_values,
+    plot_kwargs_list=[{"slice_index": 5}, {"slice_index": 5}],
+    title="Distance from background $Z$ [-]",
+    subtitles=["Chamfer distance", "Exact Euclidean distance"],
+)
 
 # -----------------------------
 # 4. Determine local minimas
@@ -115,19 +119,15 @@ markers_lib = measure.label(local_minima_lib)
 watershed_lib = watershed(-DT_lib, markers_lib, mask=binary_lib)
 
 # Plot 3d voxel render of watershed segmentation
-plot_two_panels(
-    watershed_build[2],
-    watershed_lib,
+plot_panels(
+    n=2,
+    data_list=[watershed_build[2], watershed_lib],
     plot_func=plot_3d_volume_voxels,
+    plot_kwargs_list=[
+        {"threshold_lo": 1, "threshold_hi": 2},
+        {"threshold_lo": 1, "threshold_hi": 2},
+    ],
+    title=None,  # no overall title in original call
+    subtitles=["Build", "Libraries"],
     projection="3d",
-    plot_kwargs1={"threshold_lo": 1, "threshold_hi": 2},
-    plot_kwargs2={"threshold_lo": 1, "threshold_hi": 2},
-    title1="Build",
-    title2="Libraries",
 )
-
-# plot_two_panels(watershed_build[2], watershed_build[2],
-#                 plot_func=plot_2d_slice_with_values,
-#                 plot_kwargs1={'slice_index': 5},
-#                 plot_kwargs2={'slice_index': 6},
-#                 title1='Chamfer distance',title2='Exact Euclidean distance')
