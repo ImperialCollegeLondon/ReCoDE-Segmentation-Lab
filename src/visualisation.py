@@ -458,45 +458,42 @@ def plot_one_panel(
     plt.show()
 
 
-def plot_two_panels(
-    data1,
-    data2,
+def plot_panels(n,
+    data_list,
     plot_func,
-    projection=None,
-    plot_kwargs1=None,
-    plot_kwargs2=None,
-    title1=None,
-    title2=None,
+    plot_kwargs_list=None,
+    title=None,
+    subtitles=None,
     figsize=(16, 8),
-    layout=(1, 2),
+    layout=None,
+    projection=None,
 ):
-    """Function to create a figure with two subplots.
-
-    Function to create a figure with two subplots and apply
-    a plotting function to each.
+    """Function to create a figure with n subplots.
 
     Parameters:
-        data1, data2: The datasets to be plotted in each subplot.
-        plot_func: A function that accepts an Axes object and a dataset,
-        plus optional kwargs.
-        plot_kwargs1, plot_kwargs2: Optional dictionaries of keyword
-        arguments for plot_func.
-        title1, title2: Titles for each subplot.
+        data_list: List of datasets to plot.
+        plot_func: Function that accepts an Axes object and a dataset, plus optional kwargs.
+        n: Number of subplots/panels.
+        plot_kwargs_list: List of dictionaries of kwargs for plot_func.
+        titles: List of titles for each subplot.
         figsize: Size of the overall figure.
-        layout: Tuple indicating subplot layout (rows, cols).
-        projection1, projection2: '3d' or None, for each subplot.
+        layout: Tuple indicating subplot layout (rows, cols). If None, auto layout is used.
+        projection: Projection for all subplots ('3d' or None).
 
     Returns:
         None: Displays the matplotlib figure.
     """
-    if plot_kwargs1 is None:
-        plot_kwargs1 = {}
-    if plot_kwargs2 is None:
-        plot_kwargs2 = {}
+    if plot_kwargs_list is None:
+        plot_kwargs_list = [{} for _ in range(n)]
+    if subtitles is None:
+        subtitles = [None] * n
+    if layout is None:
+        # Auto layout: try to make it roughly square
+        rows = int(n**0.5)
+        cols = (n + rows - 1) // rows
+        layout = (rows, cols)
 
     fig = plt.figure(figsize=figsize)
-    ax1 = fig.add_subplot(layout[0], layout[1], 1, projection=projection)
-    ax2 = fig.add_subplot(layout[0], layout[1], 2, projection=projection)
 
     plot_func(ax1, data1, **plot_kwargs1)
     if title1 is not None:
