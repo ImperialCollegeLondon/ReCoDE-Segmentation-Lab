@@ -458,7 +458,8 @@ def plot_one_panel(
     plt.show()
 
 
-def plot_panels(n,
+def plot_panels(
+    n,
     data_list,
     plot_func,
     plot_kwargs_list=None,
@@ -472,12 +473,14 @@ def plot_panels(n,
 
     Parameters:
         data_list: List of datasets to plot.
-        plot_func: Function that accepts an Axes object and a dataset, plus optional kwargs.
+        plot_func: Function that accepts an Axes object and a dataset,
+        plus optional kwargs.
         n: Number of subplots/panels.
         plot_kwargs_list: List of dictionaries of kwargs for plot_func.
         titles: List of titles for each subplot.
         figsize: Size of the overall figure.
-        layout: Tuple indicating subplot layout (rows, cols). If None, auto layout is used.
+        layout: Tuple indicating subplot layout (rows, cols). If None, auto layout
+          is used.
         projection: Projection for all subplots ('3d' or None).
 
     Returns:
@@ -493,15 +496,30 @@ def plot_panels(n,
         cols = (n + rows - 1) // rows
         layout = (rows, cols)
 
-    fig = plt.figure(figsize=figsize)
+    fig, axes = plt.subplots(
+        layout[0],
+        layout[1],
+        figsize=figsize,
+        subplot_kw={"projection": projection} if projection else {},
+    )
 
-    plot_func(ax1, data1, **plot_kwargs1)
-    if title1 is not None:
-        ax1.set_title(title1, fontsize=20)
+    # Ensure axes is always a flat list
+    if isinstance(axes, plt.Axes):
+        axes = [axes]
+    else:
+        axes = axes.flatten()
 
-    plot_func(ax2, data2, **plot_kwargs2)
-    if title2 is not None:
-        ax2.set_title(title2, fontsize=20)
+    for i in range(n):
+        plot_func(axes[i], data_list[i], **plot_kwargs_list[i])
+        if subtitles[i]:
+            axes[i].set_title(subtitles[i], fontsize=14)
+
+    # Hide unused axes
+    for j in range(n, len(axes)):
+        axes[j].set_visible(False)
+
+    if title:
+        fig.suptitle(title, fontsize=20)
 
     plt.subplots_adjust(bottom=0.1, top=0.9, left=0.05, right=0.95)
     plt.show()
