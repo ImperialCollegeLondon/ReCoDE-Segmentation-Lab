@@ -493,15 +493,28 @@ def plot_panels(n,
         cols = (n + rows - 1) // rows
         layout = (rows, cols)
 
-    fig = plt.figure(figsize=figsize)
+    fig, axes = plt.subplots(
+        layout[0], layout[1], figsize=figsize,
+        subplot_kw={'projection': projection} if projection else {}
+    )
 
-    plot_func(ax1, data1, **plot_kwargs1)
-    if title1 is not None:
-        ax1.set_title(title1, fontsize=20)
+    # Ensure axes is always a flat list
+    if isinstance(axes, plt.Axes):
+        axes = [axes]
+    else:
+        axes = axes.flatten()
 
-    plot_func(ax2, data2, **plot_kwargs2)
-    if title2 is not None:
-        ax2.set_title(title2, fontsize=20)
+    for i in range(n):
+        plot_func(axes[i], data_list[i], **plot_kwargs_list[i])
+        if subtitles[i]:
+            axes[i].set_title(subtitles[i], fontsize=14)
+
+    # Hide unused axes
+    for j in range(n, len(axes)):
+        axes[j].set_visible(False)
+
+    if title:
+        fig.suptitle(title, fontsize=20)
 
     plt.subplots_adjust(bottom=0.1, top=0.9, left=0.05, right=0.95)
     plt.show()
