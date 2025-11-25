@@ -10,13 +10,13 @@ from scipy import ndimage as ndi
 from skimage import filters, measure, morphology
 from skimage.segmentation import watershed
 
-from image_processing import (
+from image_processing.distance_transform import (
     chamfer_distance_3d,
-    chamfer_distance_3d_optimized,
-    find_local_minima,
-    otsu_threshold,
-    watershed_3d,
+    chamfer_distance_transform,
 )
+from image_processing.local_extrema import find_local_minima
+from image_processing.otsu_method import otsu_threshold
+from image_processing.watershed_segmentation import watershed_3d
 
 
 @pytest.mark.parametrize(
@@ -140,7 +140,7 @@ def test_optimised_chamfer_distance_approximates_euclidean(test_volume):
     binary_volume = test_volume > threshold
 
     # Compute distance using optimised chamfer implementation
-    custom_distance = chamfer_distance_3d_optimized(binary_volume)
+    custom_distance = chamfer_distance_transform(binary_volume)
 
     # Compute distance using scipy's exact Euclidean transform
     library_distance = ndi.distance_transform_edt(binary_volume)

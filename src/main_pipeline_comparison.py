@@ -36,9 +36,9 @@ from image_processing import (
 )
 from shape_creation import create_two_spheres_example
 from visualisation import (
+    plot_2d_slice_with_values,
     plot_3d_volume_voxels,
     plot_panels,
-    plot_2d_slice_with_values,
 )
 
 # -----------------------------

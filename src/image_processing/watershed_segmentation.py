@@ -15,8 +15,8 @@ Requirements:
 # Load Python packages
 import numpy as np
 
-
 # -----------------------------
+
 
 def watershed_3d(distance, binary, marker):
     """Watershed algorithm.

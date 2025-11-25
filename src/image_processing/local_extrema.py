@@ -15,8 +15,8 @@ Requirements:
 # Load Python packages
 import numpy as np
 
-
 # -----------------------------
+
 
 def find_local_minima(img):
     """Determine the local minima of an image.

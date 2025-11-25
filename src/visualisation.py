@@ -458,7 +458,8 @@ def plot_one_panel(
     plt.show()
 
 
-def plot_panels(n,
+def plot_panels(
+    n,
     data_list,
     plot_func,
     plot_kwargs_list=None,
@@ -472,12 +473,14 @@ def plot_panels(n,
 
     Parameters:
         data_list: List of datasets to plot.
-        plot_func: Function that accepts an Axes object and a dataset, plus optional kwargs.
+        plot_func: Function that accepts an Axes object and a dataset,
+        plus optional kwargs.
         n: Number of subplots/panels.
         plot_kwargs_list: List of dictionaries of kwargs for plot_func.
         titles: List of titles for each subplot.
         figsize: Size of the overall figure.
-        layout: Tuple indicating subplot layout (rows, cols). If None, auto layout is used.
+        layout: Tuple indicating subplot layout (rows, cols). If None, auto layout
+          is used.
         projection: Projection for all subplots ('3d' or None).
 
     Returns:
@@ -494,8 +497,10 @@ def plot_panels(n,
         layout = (rows, cols)
 
     fig, axes = plt.subplots(
-        layout[0], layout[1], figsize=figsize,
-        subplot_kw={'projection': projection} if projection else {}
+        layout[0],
+        layout[1],
+        figsize=figsize,
+        subplot_kw={"projection": projection} if projection else {},
     )
 
     # Ensure axes is always a flat list

@@ -169,7 +169,6 @@ def chamfer_distance_3d(img):
     Example usage:
         distance_map = chamfer_distance_3d(binary_volume)
     """
-
     # Define chamfer weights (3x3x3 neighborhood)
     weights = [
         (1, 0, 0, 3),
@@ -269,8 +268,6 @@ def chamfer_distance_3d_structured(img):
         for dx, dy, dz, w in offsets:
             nx, ny, nz = x + dx, y + dy, z + dz
             dt[z, y, x] = min(dt[z, y, x], dt[nz, ny, nx] + w)
-
-    print(f"Chamfer distance (structured) completed in {elapsed:.4f} seconds.")
 
     return dt[1:-1, 1:-1, 1:-1]
 

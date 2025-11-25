@@ -15,8 +15,8 @@ Requirements:
 # Load Python packages
 import numpy as np
 
-
 # -----------------------------
+
 
 def otsu_threshold(array3d):
     """Compute the Otsu threshold.
