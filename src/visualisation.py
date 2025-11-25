@@ -362,9 +362,9 @@ def plot_3d_volume_voxels(
     ax.set_ylabel("Y")
     ax.set_zlabel("Z")
 
-    ax.set_xlim(0,10)
-    ax.set_ylim(0,10)
-    ax.set_zlim(0,10)
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 10)
+    ax.set_zlim(0, 10)
 
     if title is not None:
         ax.set_title(title)
@@ -495,14 +495,13 @@ def plot_panels(n,
 
     fig = plt.figure(figsize=figsize)
 
-    for i in range(n):
-        ax = fig.add_subplot(layout[0], layout[1], i+1, projection=projection)
-        plot_func(ax, data_list[i], **plot_kwargs_list[i])
-        if subtitles[i] is not None:
-            ax.set_title(subtitles[i], fontsize=20)
+    plot_func(ax1, data1, **plot_kwargs1)
+    if title1 is not None:
+        ax1.set_title(title1, fontsize=20)
 
-    if title is not None:
-        fig.suptitle(title, fontsize=22)
+    plot_func(ax2, data2, **plot_kwargs2)
+    if title2 is not None:
+        ax2.set_title(title2, fontsize=20)
 
     plt.subplots_adjust(bottom=0.1, top=0.9, left=0.05, right=0.95)
     plt.show()

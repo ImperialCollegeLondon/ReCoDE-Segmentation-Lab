@@ -131,3 +131,9 @@ plot_panels(
     subtitles=["Build", "Libraries"],
     projection="3d",
 )
+
+# plot_two_panels(watershed_build[2], watershed_build[2],
+#                 plot_func=plot_2d_slice_with_values,
+#                 plot_kwargs1={'slice_index': 5},
+#                 plot_kwargs2={'slice_index': 6},
+#                 title1='Chamfer distance',title2='Exact Euclidean distance')

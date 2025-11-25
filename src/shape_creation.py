@@ -1,12 +1,4 @@
-#!/usr/bin/env python3
-"""Functions to create example array.
-
-Requirements:
-   - Python 3.11
-   - Required libraries:
-       * numpy
-
-"""
+"""Functions to create 3D volumes with spherical shapes for testing."""
 
 # -----------------------------
 import numpy as np
@@ -40,33 +32,90 @@ def create_sphere(volume_shape, centre, radius, intensity):
 
     return (sphere_mask * intensity).astype(np.uint8)
 
-def create_two_spheres_example(centre1,centre2,radius1,radius2):
-    """Function to create a example image.
 
-    Generates an example array, containing two spheres.
+def create_n_spheres_example(centres, radii, intensities, volume_size=10):
+    """Create a 3D volume containing multiple spheres.
+
+    Generates a cubic 3D array and adds multiple spheres with specified
+    parameters. When spheres overlap, the maximum intensity value is retained
+    at each voxel.
+
+    Parameters:
+        centres (list of tuples): List of centre coordinates [(cz, cy, cx), ...]
+        radii (list of float): List of sphere radii in voxels
+        intensities (list of int): List of greyscale intensity values for each sphere
+        volume_size (int): Size of the cubic volume (default: 10)
 
     Returns:
-        np.ndarray: 10x10x10 3D array with two spheres
+        np.ndarray: 3D uint8 array containing all spheres
 
+    Raises:
+        ValueError: If centres, radii, and intensities lists have different lengths
     """
-    volume_size = 10
+    # Validate input list lengths match
+    if not (len(centres) == len(radii) == len(intensities)):
+        raise ValueError(
+            f"Input lists must have equal length: centres={len(centres)}, "
+            f"radii={len(radii)}, intensities={len(intensities)}"
+        )
+
+    # Initialise empty volume
     image3d = np.zeros((volume_size, volume_size, volume_size), dtype=np.uint8)
 
-    # Add large sphere (intensity 200)
-    large_sphere = create_sphere(
-        volume_shape=image3d.shape,
-        centre=centre1,  # Centred in volume
-        radius=radius1,
-        intensity=200,
-    )
-    image3d = np.maximum(image3d, large_sphere)
+    # Add each sphere to the volume, taking maximum intensity at overlaps
+    for centre, radius, intensity in zip(centres, radii, intensities):
+        sphere = create_sphere(
+            volume_shape=image3d.shape,
+            centre=centre,
+            radius=radius,
+            intensity=intensity,
+        )
+        image3d = np.maximum(image3d, sphere)
 
-    # Add small sphere (intensity 180)
-    small_sphere = create_sphere(
-        volume_shape=image3d.shape,
-        centre=centre2,  # Offset position
-        radius=radius2,
-        intensity=180,
-    )
-    image3d = np.maximum(image3d, small_sphere)
     return image3d
+
+
+def create_two_spheres_example(centre1, centre2, radius1, radius2):
+    """Create a 3D volume containing two spheres.
+
+    Generates a 10x10x10 array containing two spheres with fixed intensities
+    of 200 and 180 for the first and second sphere respectively.
+
+    Parameters:
+        centre1 (tuple): Centre coordinates (cz, cy, cx) of first sphere
+        centre2 (tuple): Centre coordinates (cz, cy, cx) of second sphere
+        radius1 (float): Radius of first sphere in voxels
+        radius2 (float): Radius of second sphere in voxels
+
+    Returns:
+        np.ndarray: 10x10x10 3D uint8 array containing two spheres
+    """
+    return create_n_spheres_example(
+        centres=[centre1, centre2],
+        radii=[radius1, radius2],
+        intensities=[200, 180],
+    )
+
+
+def create_three_spheres_example(centre1, centre2, centre3, radius1, radius2, radius3):
+    """Create a 3D volume containing three spheres.
+
+    Generates a 10x10x10 array containing three spheres with fixed intensities
+    of 200, 180, and 160 for the first, second, and third sphere respectively.
+
+    Parameters:
+        centre1 (tuple): Centre coordinates (cz, cy, cx) of first sphere
+        centre2 (tuple): Centre coordinates (cz, cy, cx) of second sphere
+        centre3 (tuple): Centre coordinates (cz, cy, cx) of third sphere
+        radius1 (float): Radius of first sphere in voxels
+        radius2 (float): Radius of second sphere in voxels
+        radius3 (float): Radius of third sphere in voxels
+
+    Returns:
+        np.ndarray: 10x10x10 3D uint8 array containing three spheres
+    """
+    return create_n_spheres_example(
+        centres=[centre1, centre2, centre3],
+        radii=[radius1, radius2, radius3],
+        intensities=[200, 180, 160],
+    )
