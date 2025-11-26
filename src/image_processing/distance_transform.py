@@ -20,103 +20,99 @@ from numpy.lib.recfunctions import unstructured_to_structured
 # -----------------------------
 # Main and most recent Chamfer distance transform implementation
 def chamfer_distance_transform(img):
-    """Compute the chamfer distance transform using Numpy sweeps.
+    """Compute the chamfer distance transform with argwhere.
 
-    Compute the chamfer distance transform of a 3D binary NumPy array
-    using an optimized NumPy approach.
-
-    This function approximates the Euclidean distance transform using a chamfer mask,
-    which propagates integer-valued distances through local neighborhoods. It is
-    suitable for binary 3D arrays where foreground voxels are non-zero and background
-    voxels are zero.
-
-    This NumPy-only chamfer distance transform uses np.roll to simulate neighbor
-    propagation efficiently. While not part of the classical Borgefors
-    implementation, this technique is inspired by stencil-based methods and
-    array-shifting strategies commonly used in high-performance computing
-    and image processing. See Sling Academy for np.roll examples.
+    Chamfer distance transform using argwhere..
+    Performs forward and backward sweeps with integer-weighted neighbors.
+    Includes timing output for performance analysis.
 
     Parameters:
-        img (np.ndarray): 3D binary array of shape (X, Y, Z) with 0 for background
-                          and non-zero for foreground.
+        img (np.ndarray): 3D binary array (non-zero = foreground, 0 = background)
 
     Returns:
-        np.ndarray: 3D array of same shape as `img`, where each voxel contains an
-                    integer-valued approximation of the Euclidean distance to the
-                    nearest foreground voxel.
-
-    ------------------------------------------------------------------------
-    Example Usage:
-        distance_map = chamfer_distance_3d_optimized(binary_volume)
-
-    ------------------------------------------------------------------------
-
-    References:
-    - Borgefors, G. (1986). "Distance transformations in digital images."
-      Computer Vision, Graphics, and Image Processing, 34(3), 344-371.
-    - Wikipedia: https://en.wikipedia.org/wiki/Distance_transform#Chamfer_distance_transform
-    - Stack Overflow: https://stackoverflow.com/questions/53678520/speed-up-computation-for-distance-transform-on-image-in-python
-    - https://www.slingacademy.com/article/understanding-numpy-roll-function-6-examples/
+        np.ndarray: Chamfer distance map (same shape as input)
     """
-    # Define chamfer mask: each tuple is (dx, dy, dz, weight)
-    # These represent relative neighbor positions and their associated movement cost.
-    # Includes both positive and negative directions to ensure symmetric propagation.
-    sqrt2 = np.sqrt(2)
-    sqrt3 = np.sqrt(3)
 
-    offsets = [
-        (1, 0, 0, 1.0),
-        (-1, 0, 0, 1.0),
-        (0, 1, 0, 1.0),
-        (0, -1, 0, 1.0),
-        (0, 0, 1, 1.0),
-        (0, 0, -1, 1.0),
-        (1, 1, 0, sqrt2),
-        (-1, -1, 0, sqrt2),
-        (1, 0, 1, sqrt2),
-        (-1, 0, -1, sqrt2),
-        (0, 1, 1, sqrt2),
-        (0, -1, -1, sqrt2),
-        (1, 1, 1, sqrt3),
-        (-1, -1, -1, sqrt3),
-    ]
+    # Define 26-neighbor mask for sweeps:
+    # Forward uses neighbors with negative deltas; backward uses positive deltas.
 
-    # Pad the input volume with a 1-voxel border to simplify boundary handling.
-    # Padding ensures that neighbor access won't go out of bounds.
-    padded = np.pad(img != 0, pad_width=1, mode="constant", constant_values=0)
+    neighbours = []
+    weights = []
 
-    # Initialize the distance map:
-    # Foreground voxels (non-zero in original image) get distance 0.
-    # Background voxels (zero in original image) get a large initial value.
-    dt = np.where(padded, 65535, 0).astype(np.uint32)
+    # Faces
+    for dx, dy, dz in [
+        (1, 0, 0),
+        (-1, 0, 0),
+        (0, 1, 0),
+        (0, -1, 0),
+        (0, 0, 1),
+        (0, 0, -1),
+    ]:
+        neighbours.append([dx, dy, dz])
+        weights.append(1.0)
 
-    # Iterative sweeping: repeat the neighbor propagation multiple times.
-    # Each sweep allows distances to propagate further through the volume.
-    max_iter = max(img.shape)  # Dynamic upper bound based on volume shape
-    for i in range(max_iter):
-        prev_dt = dt.copy()
+    # Edges
+    for dx, dy, dz in [
+        (1, 1, 0),
+        (1, -1, 0),
+        (-1, 1, 0),
+        (-1, -1, 0),
+        (1, 0, 1),
+        (1, 0, -1),
+        (-1, 0, 1),
+        (-1, 0, -1),
+        (0, 1, 1),
+        (0, 1, -1),
+        (0, -1, 1),
+        (0, -1, -1),
+    ]:
+        neighbours.append([dx, dy, dz])
+        weights.append(np.sqrt(2))
 
-        for dx, dy, dz, w in offsets:
-            # Shift the entire distance map by (dx, dy, dz) to
-            # simulate neighbor access.
-            # This gives the neighbor values for every voxel in
-            # one operation.
-            shifted = np.roll(dt, shift=(dx, dy, dz), axis=(0, 1, 2))
-            # Update each voxel with the minimum of its current value
-            # and the neighbor's value + weight.
-            # This is the core of the chamfer propagation: finding
-            # shorter paths via neighbors.
-            dt = np.minimum(dt, shifted + w)
+    # Corners
+    for dx, dy, dz in [(1,1,1), (1,1,-1), (1,-1,1), (1,-1,-1),
+                       (-1,1,1), (-1,1,-1), (-1,-1,1), (-1,-1,-1)]:
+        neighbours.append([dx, dy, dz])
+        weights.append(np.sqrt(3))
 
-        # Check for convergence: if no values changed, break early
-        if np.array_equal(dt, prev_dt):
-            print(f"Chamfer converged after {i + 1} iterations. ")
-            break
-    else:
-        print(f"Reached max_iter={max_iter} without full convergence.")
+    neighbours = np.array(neighbours)
+    weights = np.array(weights)
 
-    # Remove the padding to return a result of the original shape.
-    return dt[1:-1, 1:-1, 1:-1]
+
+    sx, sy, sz = img.shape
+
+
+    # *** IMPORTANT: float + np.inf initialization ***
+    # Distance FROM BACKGROUND: background = 0 (sources), foreground = inf (to be updated)
+    dt = np.where(img == 0, 0.0, np.inf).astype(float)
+
+    # Sweep all voxels in lexicographic order (x, then y, then z)
+    coords = np.argwhere(np.ones_like(img, dtype=bool))
+    coords = coords[np.lexsort((coords[:, 2], coords[:, 1], coords[:, 0]))]
+
+    # Forward sweep (propagate from already-updated neighbors with negative deltas)
+    for x, y, z in coords:
+        # Skip background source voxels (optional optimization)
+        # if img[x, y, z] == 0: continue
+        for (dx, dy, dz), w in zip(neighbours, weights):
+            nx, ny, nz = x - dx, y - dy, z - dz
+            if 0 <= nx < sx and 0 <= ny < sy and 0 <= nz < sz:
+                cand = dt[nx, ny, nz] + w
+                if cand < dt[x, y, z]:
+                    dt[x, y, z] = cand
+
+    # Backward sweep (reverse order, positive deltas neighbors)
+    for x, y, z in coords[::-1]:
+        # if img[x, y, z] == 0: continue
+        for (dx, dy, dz), w in zip(neighbours, weights):
+            nx, ny, nz = x + dx, y + dy, z + dz
+            if 0 <= nx < sx and 0 <= ny < sy and 0 <= nz < sz:
+                cand = dt[nx, ny, nz] + w
+                if cand < dt[x, y, z]:
+                    dt[x, y, z] = cand
+
+    return dt
+
 
 
 # -----------------------------
@@ -271,48 +267,102 @@ def chamfer_distance_3d_structured(img):
 
     return dt[1:-1, 1:-1, 1:-1]
 
+def chamfer_distance_nroll(img):
+    """Compute the chamfer distance transform using Numpy sweeps.
 
-def chamfer_distance_3d_argwhere(img):
-    """Compute the chamfer distance transform with argwhere.
+    Compute the chamfer distance transform of a 3D binary NumPy array
+    using an optimized NumPy approach.
 
-    Chamfer distance transform using argwhere..
-    Performs forward and backward sweeps with integer-weighted neighbors.
-    Includes timing output for performance analysis.
+    This function approximates the Euclidean distance transform using a chamfer mask,
+    which propagates integer-valued distances through local neighborhoods. It is
+    suitable for binary 3D arrays where foreground voxels are non-zero and background
+    voxels are zero.
+
+    This NumPy-only chamfer distance transform uses np.roll to simulate neighbor
+    propagation efficiently. While not part of the classical Borgefors
+    implementation, this technique is inspired by stencil-based methods and
+    array-shifting strategies commonly used in high-performance computing
+    and image processing. See Sling Academy for np.roll examples.
 
     Parameters:
-        img (np.ndarray): 3D binary array (non-zero = foreground, 0 = background)
+        img (np.ndarray): 3D binary array of shape (X, Y, Z) with 0 for background
+                          and non-zero for foreground.
 
     Returns:
-        np.ndarray: Chamfer distance map (same shape as input)
+        np.ndarray: 3D array of same shape as `img`, where each voxel contains an
+                    integer-valued approximation of the Euclidean distance to the
+                    nearest foreground voxel.
+
+    ------------------------------------------------------------------------
+    Example Usage:
+        distance_map = chamfer_distance_3d_optimized(binary_volume)
+
+    ------------------------------------------------------------------------
+
+    References:
+    - Borgefors, G. (1986). "Distance transformations in digital images."
+      Computer Vision, Graphics, and Image Processing, 34(3), 344-371.
+    - Wikipedia: https://en.wikipedia.org/wiki/Distance_transform#Chamfer_distance_transform
+    - Stack Overflow: https://stackoverflow.com/questions/53678520/speed-up-computation-for-distance-transform-on-image-in-python
+    - https://www.slingacademy.com/article/understanding-numpy-roll-function-6-examples/
     """
-    # Define chamfer mask: neighbor offsets and weights
-    neighbours = np.array(
-        [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0, 1, 1], [1, 1, 1]]
-    )
-    weights = np.array([3, 3, 3, 4, 4, 4, 5])
-    sx, sy, sz = img.shape
+    # Define chamfer mask: each tuple is (dx, dy, dz, weight)
+    # These represent relative neighbor positions and their associated movement cost.
+    # Includes both positive and negative directions to ensure symmetric propagation.
+    sqrt2 = np.sqrt(2)
+    sqrt3 = np.sqrt(3)
 
-    # Initialize distance map: background = 65535, foreground = 0
-    dt = np.where(img == 0, 65535, 0).astype(np.uint32)
-    # Get background voxel coordinates
-    coords = np.argwhere(img == 0)
-    # Sort coordinates in ascending z, y, x order for forward sweep
-    coords = coords[np.lexsort((coords[:, 0], coords[:, 1], coords[:, 2]))]
+    offsets = [
+        (1, 0, 0, 1.0),
+        (-1, 0, 0, 1.0),
+        (0, 1, 0, 1.0),
+        (0, -1, 0, 1.0),
+        (0, 0, 1, 1.0),
+        (0, 0, -1, 1.0),
+        (1, 1, 0, sqrt2),
+        (-1, -1, 0, sqrt2),
+        (1, 0, 1, sqrt2),
+        (-1, 0, -1, sqrt2),
+        (0, 1, 1, sqrt2),
+        (0, -1, -1, sqrt2),
+        (1, 1, 1, sqrt3),
+        (-1, -1, -1, sqrt3),
+    ]
 
-    # Forward sweep
-    for pos in coords:
-        x, y, z = pos
-        for offset, w in zip(neighbours, weights):
-            nx, ny, nz = x - offset[0], y - offset[1], z - offset[2]
-            if 0 <= nx < sx and 0 <= ny < sy and 0 <= nz < sz:
-                dt[x, y, z] = min(dt[x, y, z], dt[nx, ny, nz] + w)
+    # Pad the input volume with a 1-voxel border to simplify boundary handling.
+    # Padding ensures that neighbor access won't go out of bounds.
+    padded = np.pad(img != 0, pad_width=1, mode="constant", constant_values=0)
 
-    # Backward sweep
-    for pos in coords[::-1]:
-        x, y, z = pos
-        for offset, w in zip(neighbours, weights):
-            nx, ny, nz = x + offset[0], y + offset[1], z + offset[2]
-            if 0 <= nx < sx and 0 <= ny < sy and 0 <= nz < sz:
-                dt[x, y, z] = min(dt[x, y, z], dt[nx, ny, nz] + w)
+    # Initialize the distance map:
+    # Foreground voxels (non-zero in original image) get distance 0.
+    # Background voxels (zero in original image) get a large initial value.
+    dt = np.where(padded, 65535, 0).astype(np.uint32)
 
-    return dt
+    # Iterative sweeping: repeat the neighbor propagation multiple times.
+    # Each sweep allows distances to propagate further through the volume.
+    max_iter = max(img.shape)  # Dynamic upper bound based on volume shape
+    for i in range(max_iter):
+        prev_dt = dt.copy()
+
+        for dx, dy, dz, w in offsets:
+            # Shift the entire distance map by (dx, dy, dz) to
+            # simulate neighbor access.
+            # This gives the neighbor values for every voxel in
+            # one operation.
+            shifted = np.roll(dt, shift=(dx, dy, dz), axis=(0, 1, 2))
+            # Update each voxel with the minimum of its current value
+            # and the neighbor's value + weight.
+            # This is the core of the chamfer propagation: finding
+            # shorter paths via neighbors.
+            dt = np.minimum(dt, shifted + w)
+
+        # Check for convergence: if no values changed, break early
+        if np.array_equal(dt, prev_dt):
+            print(f"Chamfer converged after {i + 1} iterations. ")
+            break
+    else:
+        print(f"Reached max_iter={max_iter} without full convergence.")
+
+    # Remove the padding to return a result of the original shape.
+    return dt[1:-1, 1:-1, 1:-1]
+
