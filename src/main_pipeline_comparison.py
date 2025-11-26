@@ -20,21 +20,25 @@ Requirements:
 
 # -----------------------------
 # Load Python packages
-
 import time
 
 import numpy as np
+import matplotlib.pyplot as plt
 from scipy import ndimage as ndi
 from skimage import filters, measure, morphology
 from skimage.segmentation import watershed
 
-from image_processing import (
-    chamfer_distance_3d_optimized,
-    find_local_minima,
-    otsu_threshold,
-    watershed_3d,
-)
-from shape_creation import create_two_spheres_example
+# Functions for image processing
+from image_processing.distance_transform import chamfer_distance_transform
+from image_processing.local_extrema import find_local_minima
+from image_processing.otsu_method import otsu_threshold
+from image_processing.watershed_segmentation import watershed_3d
+
+# Import custom modules
+# Functions to create synthetic 3D data
+from shape_creation import create_n_spheres_example
+
+# Functions for visualisations
 from visualisation import (
     plot_2d_slice_with_values,
     plot_3d_volume_voxels,
@@ -45,12 +49,16 @@ from visualisation import (
 # 1. Load the 3D image/dataset onto a numpy array
 # i.e. into a format that allows efficient manipulation in the later steps
 # Two clearly seperated spheres
-image3d = create_two_spheres_example(
-    centre1=(6, 6, 6), radius1=2, centre2=(2, 2, 2), radius2=1
-)
-# Two overlapping seperated spheres
-image3d = create_two_spheres_example(
-    centre1=(6, 4, 5), radius1=2, centre2=(4, 2, 2), radius2=2
+# image3d = create_two_spheres_example(
+#     centre1=(6, 6, 6), radius1=2, centre2=(2, 2, 2), radius2=1
+# )
+# Two overlapping spheres example
+# image3d = create_n_spheres_example(
+#     centres=[(6, 4, 5),(4, 2, 3)], radii=[2,2], intensities=[180,200],volume_size=10
+# )
+
+image3d = create_n_spheres_example(
+    centres=[(8, 9, 8),(7, 6, 4)], radii=[3,3], intensities=[180,200],volume_size=15
 )
 
 # Print a statement showing the crop
@@ -72,7 +80,7 @@ binary_lib = image3d > otsu_value_lib  # returns a boolean array
 # 4. Apply distance transform
 # Compute distance transform
 starttime = time.time()
-DT = chamfer_distance_3d_optimized(binary)
+DT = chamfer_distance_transform(binary)
 time_chamfer = time.time() - starttime
 starttime = time.time()
 DT_lib = ndi.distance_transform_edt(binary_lib)
@@ -121,7 +129,7 @@ watershed_lib = watershed(-DT_lib, markers_lib, mask=binary_lib)
 # Plot 3d voxel render of watershed segmentation
 plot_panels(
     n=2,
-    data_list=[watershed_build[2], watershed_lib],
+    data_list=[watershed_build[-1], watershed_lib],
     plot_func=plot_3d_volume_voxels,
     plot_kwargs_list=[
         {"threshold_lo": 1, "threshold_hi": 2},
