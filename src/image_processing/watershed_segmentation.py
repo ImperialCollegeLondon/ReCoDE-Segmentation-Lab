@@ -53,7 +53,7 @@ def watershed_3d(distance, binary, marker):
     labels = np.zeros_like(distance)
     labels_levels = np.zeros((len(distance_levels), *distance.shape), dtype=int)
 
-    for dl_i in range(len(distance_levels) - 1):
+    for dl_i in range(len(distance_levels)):
         labels_step = labels.copy()
 
         # Create mask of new distance level (only new level is true)
@@ -104,11 +104,27 @@ def watershed_3d(distance, binary, marker):
                     labels_step[x, y, z] = neig_true[0]
                 else:
                     # Multiple labelled neighbors, of different regions
-                    # Voxel is assigned to region that has more bordering voxels
-                    _values, counts = np.unique(neig_true, return_counts=True)
-                    labels_step[x, y, z] = neig_true[np.argmax(counts)]
+                    # Tie-breaking logic with weighted voting:
+                    votes = {}
+                    for (dx, dy, dz), label in zip(neighbors, neig_values):
+                        if label == 0:  # skip unlabeled
+                            continue
+                        # Determine weight based on offset type
+                        nonzero_count = np.count_nonzero([dx, dy, dz])
+                        if nonzero_count == 1:
+                            w = 3  # face neighbor
+                        elif nonzero_count == 2:
+                            w = 2  # edge neighbor
+                        else:
+                            w = 1  # corner neighbor
+                        votes[label] = votes.get(label, 0) + w
 
-        # Update labels and store in output array
+                    # Pick label with highest weighted vote
+                    labels_step[x, y, z] = max(votes, key=votes.get)
+
+
+
+    # Update labels and store in output array
         labels = labels_step
         # Output array hold the progressing/flooding steps
         # Needs to be removed for larger images
