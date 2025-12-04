@@ -362,9 +362,9 @@ def plot_3d_volume_voxels(
     ax.set_ylabel("Y")
     ax.set_zlabel("Z")
 
-    ax.set_xlim(0, np.shape(volume)[0])
-    ax.set_ylim(0, np.shape(volume)[1])
-    ax.set_zlim(0, np.shape(volume)[2])
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 10)
+    ax.set_zlim(0, 10)
 
     if title is not None:
         ax.set_title(title)
