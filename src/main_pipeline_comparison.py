@@ -45,6 +45,7 @@ from visualisation import (
     plot_panels,
 )
 
+from load_dataset import load_tif_sequence
 # -----------------------------
 # 1. Load the 3D image/dataset onto a numpy array
 # i.e. into a format that allows efficient manipulation in the later steps
@@ -61,6 +62,28 @@ image3d = create_n_spheres_example(
     centres=[(8, 9, 8),(7, 6, 4)], radii=[3,3], intensities=[180,200],volume_size=15
 )
 
+# -----------------------------
+# 1. Load the 3D image/dataset onto a numpy array
+# i.e. into a format that allows efficient manipulation in the later steps
+image3d = load_tif_sequence("../imaging_data/spherical_particles", start=100, end=199)
+
+# -----------------------------
+# 2. Crop the image to a cubical section.
+# Get the shape of the original 3D image (e.g., (depth, height, width))
+size_of_original_image3d = np.shape(image3d)
+
+# Determine the size of the cube: use the smallest dimension of the original image
+size_cubecrop = np.min(size_of_original_image3d)
+
+# Crop the 3D image to a centered cube
+image3d = image3d[
+    tuple(
+        slice((s - size_cubecrop) // 2, (s - size_cubecrop) // 2 + size_cubecrop)
+        for s in image3d.shape
+    )
+]
+
+# -----------------------------
 # Print a statement showing the crop
 print(f"3D image size {np.shape(image3d)}")
 
@@ -132,8 +155,8 @@ plot_panels(
     data_list=[watershed_build[-1], watershed_lib],
     plot_func=plot_3d_volume_voxels,
     plot_kwargs_list=[
-        {"threshold_lo": 1, "threshold_hi": 2},
-        {"threshold_lo": 1, "threshold_hi": 2},
+        {"threshold_lo": 1, "threshold_hi": 50},
+        {"threshold_lo": 1, "threshold_hi": 50},
     ],
     title=None,  # no overall title in original call
     subtitles=["Build", "Libraries"],
