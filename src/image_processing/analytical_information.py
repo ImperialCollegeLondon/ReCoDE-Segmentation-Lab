@@ -75,4 +75,3 @@ def compute_volume_and_com(labels, ignore_background=True):
         coms.append([com_z, com_y, com_x])
 
     return unique_labels, np.array(volumes, dtype=int), np.array(coms, dtype=float)
-

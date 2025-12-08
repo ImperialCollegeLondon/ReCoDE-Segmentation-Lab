@@ -252,7 +252,7 @@ def plot_3d_volume_voxels(
     volume,
     threshold_lo=None,
     threshold_hi=None,
-    cmap="viridis",
+    cmap="tab20",
     alpha=0.8,
     title=None,
 ):
