@@ -14,11 +14,11 @@ Requirements:
 - Required libraries:
 * numpy
 * matplotlib
-* plotly (for 3D visualization)
+* plotly (for 3D visualisation)
 
 Notes:
 Adapted from previous dataset loading scripts to provide
-versatile image visualization tools.
+versatile image visualisation tools.
 
 """
 
@@ -422,42 +422,6 @@ def plot_2d_slice_with_values(
             )
 
 
-def plot_one_panel(
-    data1, plot_func, projection=None, plot_kwargs1=None, title1=None, figsize=(8, 8)
-):
-    """Function to create a figure with one subplot.
-
-    Function to create a figure with one subplot. and apply a
-    plotting function to it.
-
-    Parameters:
-        data1, data2: The datasets to be plotted in each subplot.
-        plot_func: A function that accepts an Axes object and a dataset, plus
-        optional kwargs.
-        plot_kwargs1, plot_kwargs2: Optional dictionaries of keyword arguments
-        for plot_func.
-        title1, title2: Titles for each subplot.
-        figsize: Size of the overall figure.
-        layout: Tuple indicating subplot layout (rows, cols).
-        projection1, projection2: '3d' or None, for each subplot.
-
-    Returns:
-        None: Displays the matplotlib figure.
-    """
-    if plot_kwargs1 is None:
-        plot_kwargs1 = {}
-
-    fig = plt.figure(figsize=figsize)
-    ax1 = fig.add_subplot(1, 1, 1, projection=projection)
-
-    plot_func(ax1, data1, **plot_kwargs1)
-    if title1 is not None:
-        ax1.set_title(title1)
-
-    plt.tight_layout()
-    plt.show()
-
-
 def plot_panels(
     n,
     data_list,
@@ -522,4 +486,24 @@ def plot_panels(
         fig.suptitle(title, fontsize=20)
 
     plt.subplots_adjust(bottom=0.1, top=0.9, left=0.05, right=0.95)
+    plt.show()
+
+
+# Utility: plot a histogram with an optional vertical threshold line
+def plot_hist(voxels, bins=None, t=None, title="Histogram with threshold"):
+    '''
+    Plot histogram of voxel intensities.
+    '''
+    bins = bins or (np.iinfo(voxels.dtype).max + 1)
+    hist = np.bincount(voxels, minlength=bins).astype(float)
+    xs = np.arange(len(hist))
+    plt.figure(figsize=(6,3.5))
+    plt.plot(xs, hist, color="steelblue", lw=1.5)
+    if t is not None:
+        plt.axvline(t, color="crimson", ls="--", lw=2, label=f"t = {t}")
+        plt.legend()
+    plt.title(title)
+    plt.xlabel("Intensity")
+    plt.ylabel("Count")
+    plt.tight_layout()
     plt.show()
