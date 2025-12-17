@@ -14,11 +14,11 @@ Requirements:
 - Required libraries:
 * numpy
 * matplotlib
-* plotly (for 3D visualization)
+* plotly (for 3D visualisation)
 
 Notes:
 Adapted from previous dataset loading scripts to provide
-versatile image visualization tools.
+versatile image visualisation tools.
 
 """
 
@@ -31,6 +31,7 @@ matplotlib.use("TkAgg")  # or 'Qt5Agg'
 
 # Third-party packages
 import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap, BoundaryNorm
 import numpy as np
 from skimage import measure
 
@@ -255,6 +256,7 @@ def plot_3d_volume_voxels(
     cmap="tab20",
     alpha=0.8,
     title=None,
+    force_discrete=True,
 ):
     """Plot 3D volume by rendering individual voxels.
 
@@ -292,18 +294,15 @@ def plot_3d_volume_voxels(
         # Only voxels below 100
         plot_3d_volume_voxels(image3d, threshold_hi=100, cmap="plasma")
     """
-    # Determine which voxels to display based on threshold range
+
+    # --- Determine which voxels to display based on threshold range ---
     if threshold_lo is None and threshold_hi is None:
-        # No thresholds specified - show all non-zero voxels
         filled = volume > 0
     elif threshold_lo is not None and threshold_hi is None:
-        # Only lower threshold specified
         filled = volume >= threshold_lo
     elif threshold_lo is None and threshold_hi is not None:
-        # Only upper threshold specified
         filled = volume <= threshold_hi
     else:
-        # Both thresholds specified - voxels must be within range
         filled = (volume >= threshold_lo) & (volume <= threshold_hi)
 
     if not np.any(filled):
@@ -315,59 +314,101 @@ def plot_3d_volume_voxels(
             print(f"Upper threshold: {threshold_hi}")
         return
 
-    # Get colourmap
+    # --- Get base colormap function ---
     cmap_func = plt.cm.get_cmap(cmap)
 
-    # Check if volume is binary (only has 0/1 or True/False values)
-    unique_vals = np.unique(volume)
-    is_binary = len(unique_vals) <= 2 and set(unique_vals).issubset({0, 1, True, False})
+    # --- Determine if binary ---
+    unique_vals_all = np.unique(volume)
+    is_binary = (len(unique_vals_all) <= 2) and set(unique_vals_all).issubset(
+        {0, 1, True, False}
+    )
 
-    if is_binary:
-        # For binary volumes, use a constant colour from the colourmap
-        colors = np.zeros(*volume.shape + 4, dtype=float)
-        # Apply the colourmap value for "1" or "True" voxels
-        colors[filled] = cmap_func(0.7)  # Use 0.7 position in colourmap
+    # --- Compute unique labels within the filled region ---
+    unique_vals_filled = np.unique(volume[filled])
+
+    # If force_discrete, we will use categorical colors based on these unique values.
+    # Otherwise, for continuous intensity, we fall back to continuous mapping.
+    use_discrete = force_discrete or is_binary
+
+    # --- Build color array (RGBA) with same shape as volume ---
+    colors = np.zeros(volume.shape + (4,), dtype=float)
+
+    if use_discrete:
+        # DISCRETE mapping: one color per unique label
+
+        # Order the unique values (sorted) for reproducibility
+        labels = np.sort(unique_vals_filled)
+        n_labels = len(labels)
+
+        # Sample n_labels colors from colormap evenly
+        # If colormap has limited distinct colors (e.g., tab20), this still works up to its size
+        # For more than the colormap size, colors will repeat / blend; consider using 'tab20' or 'tab20b/tab20c'
+        color_list = [cmap_func(i / max(1, n_labels - 1)) for i in range(n_labels)]
+        listed_cmap = ListedColormap(color_list)
+
+        # Create boundaries between labels for BoundaryNorm.
+        # We construct boundaries that sit halfway between consecutive label values.
+        # If labels are integers, this creates clear bins. For non-integers, it still bins correctly.
+        if n_labels == 1:
+            # Single label: make a small bin around it
+            boundaries = [labels[0] - 0.5, labels[0] + 0.5]
+        else:
+            mids = (labels[:-1] + labels[1:]) / 2.0
+            boundaries = (
+                [labels[0] - (mids[0] - labels[0])]
+                + list(mids)
+                + [labels[-1] + (labels[-1] - mids[-1])]
+            )
+        norm = BoundaryNorm(boundaries, listed_cmap.N)
+
+        # Map all voxels to RGBA via the discrete cmap/norm
+        mapped_colors = listed_cmap(norm(volume))
+        colors[...] = mapped_colors
+
+        # Set alpha: transparent for non-filled, specified alpha for filled
+        colors[~filled, 3] = 0.0
         colors[filled, 3] = alpha
+
+        # Draw voxels
+        ax.voxels(filled, facecolors=colors, edgecolors=None)
+
+        # --- Add discrete colorbar with one entry per unique label ---
+        sm = plt.cm.ScalarMappable(cmap=listed_cmap, norm=norm)
+        sm.set_array([])
+
+        cbar = plt.colorbar(sm, ax=ax, pad=0.1, shrink=0.8)
+        # Tick at the actual label values (centers)
+        # For BoundaryNorm, good tick locations are the labels themselves
+        cbar.set_ticks(labels)
+        cbar.set_ticklabels([str(v) for v in labels])
+        cbar.set_label("Labels")
+
     else:
-        # For intensity volumes, map values to colours
+        # CONTINUOUS mapping (only if force_discrete=False and volume is not binary)
         vmin, vmax = volume.min(), volume.max()
         if vmax > vmin:
             norm_volume = (volume - vmin) / (vmax - vmin)
         else:
             norm_volume = np.ones_like(volume, dtype=float) * 0.5
 
-        # Create RGBA colour array
-        colors = cmap_func(norm_volume)
-
-        # Set alpha: transparent for non-filled, specified alpha for filled
-        colors[~filled, 3] = 0
+        rgba = cmap_func(norm_volume)
+        colors[...] = rgba
+        colors[~filled, 3] = 0.0
         colors[filled, 3] = alpha
 
-    # Draw voxels
-    ax.voxels(filled, facecolors=colors, edgecolors=None)
+        ax.voxels(filled, facecolors=colors, edgecolors=None)
 
-    # Add colourbar for intensity volumes (not meaningful for binary volumes)
-    if not is_binary:
-        # Create a ScalarMappable to represent the colour mapping
-        # This is needed because ax.voxels() doesn't return a mappable object
-        norm = plt.Normalize(vmin=volume.min(), vmax=volume.max())
-        sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
-        sm.set_array([])  # Required for the colourbar to work
-
-        # Add colourbar to the figure
+        # Add continuous colorbar
+        norm = plt.Normalize(vmin=vmin, vmax=vmax)
+        sm = plt.cm.ScalarMappable(cmap=cmap_func, norm=norm)
+        sm.set_array([])
         plt.colorbar(sm, ax=ax, pad=0.1, shrink=0.8, label="Intensity")
 
-    # Labels
+    # --- Axes labels ---
     ax.set_xlabel("X")
     ax.set_ylabel("Y")
     ax.set_zlabel("Z")
 
-    ax.set_xlim(0, 10)
-    ax.set_ylim(0, 10)
-    ax.set_zlim(0, 10)
-
-    if title is not None:
-        ax.set_title(title)
 
 
 def plot_2d_slice_with_values(
@@ -420,42 +461,6 @@ def plot_2d_slice_with_values(
             ax.text(
                 j, i, f"{val:.1f}", ha="center", va="center", color="white", fontsize=8
             )
-
-
-def plot_one_panel(
-    data1, plot_func, projection=None, plot_kwargs1=None, title1=None, figsize=(8, 8)
-):
-    """Function to create a figure with one subplot.
-
-    Function to create a figure with one subplot. and apply a
-    plotting function to it.
-
-    Parameters:
-        data1, data2: The datasets to be plotted in each subplot.
-        plot_func: A function that accepts an Axes object and a dataset, plus
-        optional kwargs.
-        plot_kwargs1, plot_kwargs2: Optional dictionaries of keyword arguments
-        for plot_func.
-        title1, title2: Titles for each subplot.
-        figsize: Size of the overall figure.
-        layout: Tuple indicating subplot layout (rows, cols).
-        projection1, projection2: '3d' or None, for each subplot.
-
-    Returns:
-        None: Displays the matplotlib figure.
-    """
-    if plot_kwargs1 is None:
-        plot_kwargs1 = {}
-
-    fig = plt.figure(figsize=figsize)
-    ax1 = fig.add_subplot(1, 1, 1, projection=projection)
-
-    plot_func(ax1, data1, **plot_kwargs1)
-    if title1 is not None:
-        ax1.set_title(title1)
-
-    plt.tight_layout()
-    plt.show()
 
 
 def plot_panels(
@@ -522,4 +527,24 @@ def plot_panels(
         fig.suptitle(title, fontsize=20)
 
     plt.subplots_adjust(bottom=0.1, top=0.9, left=0.05, right=0.95)
+    plt.show()
+
+
+# Utility: plot a histogram with an optional vertical threshold line
+def plot_hist(voxels, bins=None, t=None, title="Histogram with threshold"):
+    '''
+    Plot histogram of voxel intensities.
+    '''
+    bins = bins or (np.iinfo(voxels.dtype).max + 1)
+    hist = np.bincount(voxels, minlength=bins).astype(float)
+    xs = np.arange(len(hist))
+    plt.figure(figsize=(6,3.5))
+    plt.plot(xs, hist, color="steelblue", lw=1.5)
+    if t is not None:
+        plt.axvline(t, color="crimson", ls="--", lw=2, label=f"t = {t}")
+        plt.legend()
+    plt.title(title)
+    plt.xlabel("Intensity")
+    plt.ylabel("Count")
+    plt.tight_layout()
     plt.show()
