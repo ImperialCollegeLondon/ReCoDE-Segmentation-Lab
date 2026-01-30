@@ -81,32 +81,29 @@ def watershed_3d(distance, binary, marker):
             nx, ny, nz = neigh.T
 
             # Compare against labeled array (only previous level at this step)
-            neig_values = labels[nx, ny, nz]
+            neigh_vals = labels[nx, ny, nz]
 
             # Check if any of the neighbors are not false,
             # i.e. already part of a labeled region
-            if np.all(neig_values == 0):
-                # This must be a new local minima
-                # Check label from markers
+            if np.all(neigh_vals == 0):
                 labels_step[x, y, z] = marker[x, y, z]
             else:
-                # Has true neighbors at previous level
-                # Reduce to only true neighbores
-                neig_true = neig_values[neig_values != 0]
-
-                if neig_true.size == 1:
-                    # Only one labelled neighbor (must be part of the region)
-                    labels_step[x, y, z] = neig_true
-                elif np.all(neig_true == neig_true[0]):
-                    # Multiple labelled neighbors, but of the same labelled region
-                    # (must be same label region)
-                    # This can in theory be replaced, else would result in the same.
-                    labels_step[x, y, z] = neig_true[0]
+                neigh_true = neigh_vals[neigh_vals != 0]
+                if neigh_true.size == 1:
+                    labels_step[x, y, z] = neigh_true[0]
+                elif np.all(neigh_true == neigh_true[0]):
+                    labels_step[x, y, z] = neigh_true[0]
                 else:
-                    # Multiple labelled neighbors, of different regions
-                    # Voxel is assigned to region that has more bordering voxels
-                    _values, counts = np.unique(neig_true, return_counts=True)
-                    labels_step[x, y, z] = neig_true[np.argmax(counts)]
+                    votes = {}
+                    for (dx, dy, dz), lbl in zip(
+                        neigh - np.array([x, y, z]), neigh_vals
+                    ):
+                        if lbl == 0:
+                            continue
+                        nzc = np.count_nonzero([dx, dy, dz])
+                        w = 3 if nzc == 1 else (2 if nzc == 2 else 1)
+                        votes[lbl] = votes.get(lbl, 0) + w
+                    labels_step[x, y, z] = max(votes, key=votes.get)
 
         # Update labels and store in output array
         labels = labels_step
