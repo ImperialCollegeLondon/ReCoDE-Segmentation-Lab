@@ -38,7 +38,7 @@ Before starting, learners should have:
 
 ### Academic 📚
 - Basic proficiency in Python — including functions, loops, and file handling.
-- Familiarity with NumPy for numerical array operations. [Numerical Computing in Python with NumPy & SciPy](https://www.imperial.ac.uk/early-career-researcher-institute/learning-and-development/courses-by-programme/research-computing-and-data-science/numerical-computing-in-python-with)
+- Familiarity with NumPy for numerical array operations. [Numerical Computing in Python with NumPy & SciPy](https://www.imperial.ac.uk/early-career-researcher-institute/learning-and-development/courses-by-programme/research-computing-and-data-science/numerical-computing-in-python-with-numpy--scipy/)
 - Introductory understanding of image processing concepts (e.g., grayscale intensity).
 
 ### System 💻
