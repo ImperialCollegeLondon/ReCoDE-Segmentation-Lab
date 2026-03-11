@@ -3,7 +3,7 @@
 Image segmentation is a core technique in image analysis and computer vision, enabling us to divide an image or 3D volume into distinct, meaningful regions. This process is essential for tasks such as identifying anatomical structures in medical scans, detecting objects in autonomous driving, or analyzing materials in industrial inspection. By isolating relevant components from complex data, segmentation serves as a foundation for quantitative analysis, visualization, and decision-making in scientific and engineering workflows.
 
 This repository offers a guided, hands-on approach to building a 3D image segmentation pipeline from scratch in Python.
-![Scikit Camera Image](images/segmented_spheres.png) 
+![Scikit Camera Image](docs/assets/segmented_spheres.png) 
 Working with a simple synthetic volumetric dataset, learners can focus on understanding the algorithmic workflow without the complexity of real-world data. Through a series of notebooks, you’ll progress step by step through the essential stages of an image processing pipeline, culminating in a custom implementation of segmentation using classical methods such as thresholding and marker-based watershed.
 
 Finally, the custom-built pipeline is compared against a highly optimized library implementation that leverages compiled C code for performance, illustrating the trade-offs between educational clarity and production-ready efficiency. This approach not only deepens understanding of the underlying algorithms but also highlights best practices for reproducible, scalable image processing.
